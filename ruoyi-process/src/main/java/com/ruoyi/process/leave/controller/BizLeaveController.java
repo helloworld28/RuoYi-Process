@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.ruoyi.process.utils.ParameterUtils.transToVariables;
 
 /**
  * 请假业务Controller
@@ -137,7 +137,7 @@ public class BizLeaveController extends BaseController {
      */
     @RequiresPermissions("process:leave:remove")
     @Log(title = "请假业务", businessType = BusinessType.DELETE)
-    @PostMapping( "/remove")
+    @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
         return toAjax(bizLeaveService.deleteBizLeaveByIds(ids));
@@ -147,7 +147,7 @@ public class BizLeaveController extends BaseController {
      * 提交申请
      */
     @Log(title = "请假业务", businessType = BusinessType.UPDATE)
-    @PostMapping( "/submitApply")
+    @PostMapping("/submitApply")
     @ResponseBody
     public AjaxResult submitApply(Long id) {
         BizLeaveVo leave = bizLeaveService.selectBizLeaveById(id);
@@ -164,6 +164,7 @@ public class BizLeaveController extends BaseController {
 
     /**
      * 我的待办列表
+     *
      * @param bizLeave
      * @return
      */
@@ -178,6 +179,7 @@ public class BizLeaveController extends BaseController {
 
     /**
      * 加载审批弹窗
+     *
      * @param taskId
      * @param mmap
      * @return
@@ -202,34 +204,13 @@ public class BizLeaveController extends BaseController {
     @RequestMapping(value = "/complete/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public AjaxResult complete(@PathVariable("taskId") String taskId, @RequestParam(value = "saveEntity", required = false) String saveEntity,
-                           @ModelAttribute("preloadLeave") BizLeaveVo leave, HttpServletRequest request) {
+                               @ModelAttribute("preloadLeave") BizLeaveVo leave, HttpServletRequest request) {
         boolean saveEntityBoolean = BooleanUtils.toBoolean(saveEntity);
-        Map<String, Object> variables = new HashMap<String, Object>();
         Enumeration<String> parameterNames = request.getParameterNames();
-        String comment = null;          // 批注
         try {
-            while (parameterNames.hasMoreElements()) {
-                String parameterName = (String) parameterNames.nextElement();
-                if (parameterName.startsWith("p_")) {
-                    // 参数结构：p_B_name，p为参数的前缀，B为类型，name为属性名称
-                    String[] parameter = parameterName.split("_");
-                    if (parameter.length == 3) {
-                        String paramValue = request.getParameter(parameterName);
-                        Object value = paramValue;
-                        if (parameter[1].equals("B")) {
-                            value = BooleanUtils.toBoolean(paramValue);
-                        } else if (parameter[1].equals("DT")) {
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                            value = sdf.parse(paramValue);
-                        } else if (parameter[1].equals("COM")) {
-                            comment = paramValue;
-                        }
-                        variables.put(parameter[2], value);
-                    } else {
-                        throw new RuntimeException("invalid parameter for activiti variable: " + parameterName);
-                    }
-                }
-            }
+            //批注
+            Map<String, Object> variables = transToVariables(request, parameterNames);
+            String comment = (String) variables.get("comment");
             if (StringUtils.isNotEmpty(comment)) {
                 identityService.setAuthenticatedUserId(ShiroUtils.getLoginName());
                 taskService.addComment(taskId, leave.getInstanceId(), comment);
@@ -238,10 +219,11 @@ public class BizLeaveController extends BaseController {
 
             return success("任务已完成");
         } catch (Exception e) {
-            logger.error("error on complete task {}, variables={}", new Object[]{taskId, variables, e});
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, e});
             return error("完成任务失败");
         }
     }
+
 
     /**
      * 自动绑定页面字段
@@ -262,6 +244,7 @@ public class BizLeaveController extends BaseController {
 
     /**
      * 我的已办列表
+     *
      * @param bizLeave
      * @return
      */

@@ -21,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -59,21 +61,20 @@ public class BizTodoItemController extends BaseController {
 
     /**
      * 加载办理弹窗
+     *
      * @param taskId
      * @param mmap
      * @return
      */
     @GetMapping("/showVerifyDialog/{taskId}")
-    public String showVerifyDialog(@PathVariable("taskId") String taskId, ModelMap mmap,
-                                   String module, String formPageName) {
+    public ModelAndView showVerifyDialog(@PathVariable("taskId") String taskId, HttpServletRequest request,
+                                         String module, String formPageName) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         String processInstanceId = task.getProcessInstanceId();
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        BizLeaveVo bizLeave = bizLeaveService.selectBizLeaveById(new Long(processInstance.getBusinessKey()));
-        mmap.put("bizLeave", bizLeave);
-        mmap.put("taskId", taskId);
-//        String verifyName = task.getTaskDefinitionKey().substring(0, 1).toUpperCase() + task.getTaskDefinitionKey().substring(1);
-        return "process/" + module + "/" + formPageName;
+        request.setAttribute("id", processInstance.getBusinessKey());
+        request.setAttribute("taskId", taskId);
+        return new ModelAndView("forward:/" + "process/" + module + "/" + formPageName + "/" + processInstance.getBusinessKey());
     }
 
     @RequiresPermissions("process:todoitem:view")
@@ -192,7 +193,7 @@ public class BizTodoItemController extends BaseController {
      */
     @RequiresPermissions("process:todoitem:remove")
     @Log(title = "待办事项", businessType = BusinessType.DELETE)
-    @PostMapping( "/remove")
+    @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
         return toAjax(bizTodoItemService.deleteBizTodoItemByIds(ids));

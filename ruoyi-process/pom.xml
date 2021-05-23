@@ -61,6 +61,12 @@
             <artifactId>batik-svggen</artifactId>
             <version>1.7</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- xml解析依赖-->
         <!--activiti modeler 5.22 end-->
     </dependencies>

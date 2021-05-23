@@ -61,4 +61,8 @@ public interface IBizTodoItemService {
     public int deleteBizTodoItemById(Long id);
 
     int insertTodoItem(String instanceId, BizLeaveVo leave, String module);
+
+     int insertTodoItem(String instanceId, String title, String reason, String module);
+
+     void updateToDoItemList(String taskId, String userId, String userName);
 }

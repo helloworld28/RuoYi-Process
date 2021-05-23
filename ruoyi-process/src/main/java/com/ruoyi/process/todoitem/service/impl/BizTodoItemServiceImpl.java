@@ -3,6 +3,7 @@ package com.ruoyi.process.todoitem.service.impl;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.process.general.mapper.ProcessMapper;
 import com.ruoyi.process.leave.domain.BizLeaveVo;
 import com.ruoyi.process.todoitem.domain.BizTodoItem;
@@ -16,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -106,18 +108,24 @@ public class BizTodoItemServiceImpl implements IBizTodoItemService {
         return bizTodoItemMapper.deleteBizTodoItemById(id);
     }
 
+
     @Override
     public int insertTodoItem(String instanceId, BizLeaveVo leave, String module) {
+        return insertTodoItem(instanceId, leave.getTitle(), leave.getReason(), module);
+    }
+
+    @Override
+    public int insertTodoItem(String instanceId, String title, String reason, String module) {
         BizTodoItem todoItem = new BizTodoItem();
-        todoItem.setItemName(leave.getTitle());
-        todoItem.setItemContent(leave.getReason());
+        todoItem.setItemName(title);
+        todoItem.setItemContent(reason);
         todoItem.setIsView("0");
         todoItem.setIsHandle("0");
         todoItem.setModule(module);
         todoItem.setTodoTime(DateUtils.getNowDate());
         List<Task> taskList = taskService.createTaskQuery().processInstanceId(instanceId).active().list();
         int counter = 0;
-        for (Task task: taskList) {
+        for (Task task : taskList) {
 
             // todoitem 去重
             BizTodoItem bizTodoItem = bizTodoItemMapper.selectTodoItemByTaskId(task.getId());
@@ -137,7 +145,7 @@ public class BizTodoItemServiceImpl implements IBizTodoItemService {
                 counter++;
             } else {
                 List<String> todoUserIdList = processMapper.selectTodoUserListByTaskId(task.getId());
-                for (String todoUserId: todoUserIdList) {
+                for (String todoUserId : todoUserIdList) {
                     SysUser todoUser = userMapper.selectUserByLoginName(todoUserId);
                     newItem.setTodoUserId(todoUser.getLoginName());
                     newItem.setTodoUserName(todoUser.getUserName());
@@ -147,5 +155,26 @@ public class BizTodoItemServiceImpl implements IBizTodoItemService {
             }
         }
         return counter;
+    }
+
+    public void updateToDoItemList(String taskId, String userId, String userName) {
+        // 更新待办事项状态
+        BizTodoItem query = new BizTodoItem();
+        query.setTaskId(taskId);
+        // 考虑到候选用户组，会有多个 todoitem 办理同个 task
+        List<BizTodoItem> todoItems = selectBizTodoItemList(query);
+        for (BizTodoItem update: todoItems) {
+            // 找到当前登录用户的 todoitem，置为已办
+            if (update.getTodoUserId().equals(ShiroUtils.getLoginName())) {
+                update.setIsView("1");
+                update.setIsHandle("1");
+                update.setHandleUserId(userId);
+                update.setHandleUserName(userName);
+                update.setHandleTime(DateUtils.getNowDate());
+               updateBizTodoItem(update);
+            } else {
+                deleteBizTodoItemById(update.getId()); // 删除候选用户组其他 todoitem
+            }
+        }
     }
 }

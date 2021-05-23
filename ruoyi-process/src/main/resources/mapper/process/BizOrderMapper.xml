@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.process.order.mapper.BizOrderMapper">
+    
+    <resultMap type="BizOrder" id="BizOrderResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="itemNo"    column="item_no"    />
+        <result property="colorCode"    column="color_code"    />
+        <result property="quatity"    column="quatity"    />
+        <result property="specialDemands"    column="special_demands"    />
+        <result property="purchased"    column="purchased"    />
+        <result property="pickUpWay"    column="pick_up_way"    />
+        <result property="pickUpDate"    column="pick_up_date"    />
+        <result property="paid"    column="paid"    />
+        <result property="priority"    column="priority"    />
+        <result property="applyUserId"    column="apply_user_id"    />
+        <result property="applyUserName"    column="apply_user_name"    />
+        <result property="instanceId"    column="instance_id"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBizOrderVo">
+        select id, order_id, customer_id, customer_name, item_no, color_code, quatity, special_demands, purchased, pick_up_way, pick_up_date, paid, priority, apply_user_id, apply_user_name, instance_id, status, create_time, create_by, update_by, update_time, remark from biz_order
+    </sql>
+
+    <select id="selectBizOrderList" parameterType="BizOrder" resultMap="BizOrderResult">
+        <include refid="selectBizOrderVo"/>
+        <where>  
+            <if test="customerId != null  and customerId != ''"> and customer_id = #{customerId}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="itemNo != null  and itemNo != ''"> and item_no = #{itemNo}</if>
+            <if test="colorCode != null  and colorCode != ''"> and color_code = #{colorCode}</if>
+            <if test="quatity != null "> and quatity = #{quatity}</if>
+            <if test="specialDemands != null  and specialDemands != ''"> and special_demands = #{specialDemands}</if>
+            <if test="purchased != null "> and purchased = #{purchased}</if>
+            <if test="pickUpWay != null  and pickUpWay != ''"> and pick_up_way = #{pickUpWay}</if>
+            <if test="pickUpDate != null  and pickUpDate != ''"> and pick_up_date = #{pickUpDate}</if>
+            <if test="paid != null "> and paid = #{paid}</if>
+            <if test="priority != null  and priority != ''"> and priority = #{priority}</if>
+            <if test="applyUserId != null and customerName != ''"> and apply_user_id = #{applyUserId}</if>
+            <if test="applyUserName != null  and applyUserName != ''"> and apply_user_name like concat('%', #{applyUserName}, '%')</if>
+            <if test="instanceId != null  and instanceId != ''"> and instance_id = #{instanceId}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizOrderById" parameterType="Long" resultMap="BizOrderResult">
+        <include refid="selectBizOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizOrder" parameterType="BizOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null  and orderId != ''">order_id,</if>
+            <if test="customerId != null  and customerId != ''">customer_id,</if>
+            <if test="customerName != null  and customerName != ''">customer_name,</if>
+            <if test="itemNo != null  and itemNo != ''">item_no,</if>
+            <if test="colorCode != null  and colorCode != ''">color_code,</if>
+            <if test="quatity != null ">quatity,</if>
+            <if test="specialDemands != null  and specialDemands != ''">special_demands,</if>
+            <if test="purchased != null ">purchased,</if>
+            <if test="pickUpWay != null  and pickUpWay != ''">pick_up_way,</if>
+            <if test="pickUpDate != null  and pickUpDate != ''">pick_up_date,</if>
+            <if test="paid != null ">paid,</if>
+            <if test="priority != null  and priority != ''">priority,</if>
+            <if test="applyUserId != null and customerName != ''">apply_user_id,</if>
+            <if test="applyUserName != null  and applyUserName != ''">apply_user_name,</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id,</if>
+            <if test="status != null ">status,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null ">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null  and orderId != ''">#{orderId},</if>
+            <if test="customerId != null  and customerId != ''">#{customerId},</if>
+            <if test="customerName != null  and customerName != ''">#{customerName},</if>
+            <if test="itemNo != null  and itemNo != ''">#{itemNo},</if>
+            <if test="colorCode != null  and colorCode != ''">#{colorCode},</if>
+            <if test="quatity != null ">#{quatity},</if>
+            <if test="specialDemands != null  and specialDemands != ''">#{specialDemands},</if>
+            <if test="purchased != null ">#{purchased},</if>
+            <if test="pickUpWay != null  and pickUpWay != ''">#{pickUpWay},</if>
+            <if test="pickUpDate != null  and pickUpDate != ''">#{pickUpDate},</if>
+            <if test="paid != null ">#{paid},</if>
+            <if test="priority != null  and priority != ''">#{priority},</if>
+            <if test="applyUserId != null and customerName != ''">#{applyUserId},</if>
+            <if test="applyUserName != null  and applyUserName != ''">#{applyUserName},</if>
+            <if test="instanceId != null  and instanceId != ''">#{instanceId},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null ">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizOrder" parameterType="BizOrder">
+        update biz_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null  and orderId != ''">order_id = #{orderId},</if>
+            <if test="customerId != null  and customerId != ''">customer_id = #{customerId},</if>
+            <if test="customerName != null  and customerName != ''">customer_name = #{customerName},</if>
+            <if test="itemNo != null  and itemNo != ''">item_no = #{itemNo},</if>
+            <if test="colorCode != null  and colorCode != ''">color_code = #{colorCode},</if>
+            <if test="quatity != null ">quatity = #{quatity},</if>
+            <if test="specialDemands != null  and specialDemands != ''">special_demands = #{specialDemands},</if>
+            <if test="purchased != null ">purchased = #{purchased},</if>
+            <if test="pickUpWay != null  and pickUpWay != ''">pick_up_way = #{pickUpWay},</if>
+            <if test="pickUpDate != null  and pickUpDate != ''">pick_up_date = #{pickUpDate},</if>
+            <if test="paid != null ">paid = #{paid},</if>
+            <if test="priority != null  and priority != ''">priority = #{priority},</if>
+            <if test="applyUserId != null ">apply_user_id = #{applyUserId},</if>
+            <if test="applyUserName != null  and applyUserName != ''">apply_user_name = #{applyUserName},</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id = #{instanceId},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null ">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizOrderById" parameterType="Long">
+        delete from biz_order where id = #{id}
+    </delete>
+
+    <delete id="deleteBizOrderByIds" parameterType="String">
+        delete from biz_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

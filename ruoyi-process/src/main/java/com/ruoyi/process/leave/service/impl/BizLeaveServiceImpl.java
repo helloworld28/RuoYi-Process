@@ -92,7 +92,7 @@ public class BizLeaveServiceImpl implements IBizLeaveService {
         // PageHelper 仅对第一个 List 分页
         Page<BizLeaveVo> list = (Page<BizLeaveVo>) bizLeaveMapper.selectBizLeaveList(bizLeave);
         Page<BizLeaveVo> returnList = new Page<>();
-        for (BizLeaveVo leave: list) {
+        for (BizLeaveVo leave : list) {
             SysUser sysUser = userMapper.selectUserByLoginName(leave.getCreateBy());
             if (sysUser != null) {
                 leave.setCreateUserName(sysUser.getUserName());
@@ -174,6 +174,7 @@ public class BizLeaveServiceImpl implements IBizLeaveService {
 
     /**
      * 启动流程
+     *
      * @param entity
      * @param applyUserId
      * @return
@@ -250,6 +251,7 @@ public class BizLeaveServiceImpl implements IBizLeaveService {
 
     /**
      * 完成任务
+     *
      * @param leave
      * @param saveEntity
      * @param taskId
@@ -264,31 +266,16 @@ public class BizLeaveServiceImpl implements IBizLeaveService {
         taskService.claim(taskId, ShiroUtils.getLoginName());
         taskService.complete(taskId, variables);
 
-        // 更新待办事项状态
-        BizTodoItem query = new BizTodoItem();
-        query.setTaskId(taskId);
-        // 考虑到候选用户组，会有多个 todoitem 办理同个 task
-        List<BizTodoItem> updateList = CollectionUtils.isEmpty(bizTodoItemService.selectBizTodoItemList(query)) ? null : bizTodoItemService.selectBizTodoItemList(query);
-        for (BizTodoItem update: updateList) {
-            // 找到当前登录用户的 todoitem，置为已办
-            if (update.getTodoUserId().equals(ShiroUtils.getLoginName())) {
-                update.setIsView("1");
-                update.setIsHandle("1");
-                update.setHandleUserId(ShiroUtils.getLoginName());
-                update.setHandleUserName(ShiroUtils.getSysUser().getUserName());
-                update.setHandleTime(DateUtils.getNowDate());
-                bizTodoItemService.updateBizTodoItem(update);
-            } else {
-                bizTodoItemService.deleteBizTodoItemById(update.getId()); // 删除候选用户组其他 todoitem
-            }
-        }
+        bizTodoItemService.updateToDoItemList(taskId, ShiroUtils.getLoginName(), ShiroUtils.getSysUser().getUserName());
 
         // 下一节点处理人待办事项
         bizTodoItemService.insertTodoItem(leave.getInstanceId(), leave, "leave");
     }
 
+
     /**
      * 查询已办列表
+     *
      * @param bizLeave
      * @param userId
      * @return

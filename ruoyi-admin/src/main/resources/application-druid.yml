@@ -10,7 +10,7 @@ spring:
                 url: jdbc:mysql://localhost:3306/ry_test?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
 #                url: jdbc:mysql://localhost:3306/ry?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&nullCatalogMeansCurrent=true
                 username: root
-                password: root
+                password: admin
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
@@ -20,7 +20,7 @@ spring:
                 password:
             # 初始连接数
             initialSize: 5
-            # 最小连接池数量
+            # 最小连接池数量B
             minIdle: 10
             # 最大连接池数量
             maxActive: 20
