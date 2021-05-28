@@ -34,6 +34,7 @@
 		<velocity.version>1.7</velocity.version>
 		<!--Activiti 启动器版本-->
 		<activiti.starter.version>6.0.0</activiti.starter.version>
+		<hutool.verion>5.6.6</hutool.verion>
 	</properties>
 
     <!-- 依赖声明 -->

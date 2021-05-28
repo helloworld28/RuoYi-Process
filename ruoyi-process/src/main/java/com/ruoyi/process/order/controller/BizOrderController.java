@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.process;
 
+import com.github.promeg.pinyinhelper.Pinyin;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -16,6 +17,7 @@ import com.ruoyi.system.domain.SysUser;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
@@ -23,11 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.ruoyi.process.utils.ParameterUtils.transToVariables;
 
@@ -106,16 +110,14 @@ public class BizOrderController extends BaseController {
         if (SysUser.isAdmin(userId)) {
             return error("提交申请失败：不允许管理员提交申请！");
         }
-        bizOrder.setApplyUserId(ShiroUtils.getLoginName());
-        bizOrder.setCreateBy(ShiroUtils.getLoginName());
-        bizOrder.setApplyUserName(ShiroUtils.getLoginName());
+
         return toAjax(bizOrderService.insertBizOrder(bizOrder));
     }
 
     /**
      * 提交申请
      */
-    @Log(title = "订单业务", businessType = BusinessType.UPDATE)
+    @Log(title = "提交订单申请", businessType = BusinessType.UPDATE)
     @PostMapping("/submitApply")
     @ResponseBody
     public AjaxResult submitApply(Long id) {
@@ -135,19 +137,7 @@ public class BizOrderController extends BaseController {
         return prefix + "/edit";
     }
 
-    @GetMapping("/taskAcceptOrder/{id}")
-    public String taskAcceptOrder(@PathVariable("id") Long id, HttpServletRequest request, ModelMap mmap) {
-        BizOrder bizOrder = bizOrderService.selectBizOrderById(id);
-        BizOrderVo bizOrderVo = new BizOrderVo();
-        BeanUtils.copyProperties(bizOrder, bizOrderVo);
 
-        String taskId = (String) request.getAttribute("taskId");
-
-        bizOrderVo.setTaskId(taskId);
-        mmap.put("bizOrder", bizOrderVo);
-
-        return prefix + "/taskAcceptOrder";
-    }
 
     @PostMapping("/claimOrder")
     @ResponseBody
@@ -204,22 +194,27 @@ public class BizOrderController extends BaseController {
      * 加载审批弹窗
      *
      * @param taskId
-     * @param mmap
      * @return
      */
     @GetMapping("/showVerifyDialog/{taskId}")
-    public String showVerifyDialog(@PathVariable("taskId") String taskId, ModelMap mmap) {
+    public ModelAndView showVerifyDialog(@PathVariable("taskId") String taskId) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-        String processInstanceId = task.getProcessInstanceId();
-        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        BizOrder bizOrder = bizOrderService.selectBizOrderById(new Long(processInstance.getBusinessKey()));
-        BizOrderVo bizOrderVo = new BizOrderVo(bizOrder);
-        bizOrderVo.setTaskId(taskId);
-
-        mmap.put("bizOrder", bizOrderVo);
         String verifyName = StringUtils.capitalize(task.getTaskDefinitionKey());
-        return prefix + "/task" + verifyName;
+        return new ModelAndView("forward:/" + prefix + "/task" + verifyName+ "/" + taskId);
     }
+
+    @GetMapping("/taskAcceptOrder/{taskId}")
+    public String taskAcceptOrder(@PathVariable String taskId, ModelMap modelMap) {
+        modelMap.put("bizOrder", orderProcessService.getBizOrderByTaskId(taskId));
+        return prefix + "/taskAcceptOrder";
+    }
+
+    @GetMapping("/taskReports/{taskId}")
+    public String taskReports(@PathVariable String taskId, ModelMap modelMap) {
+        modelMap.put("bizOrder", orderProcessService.getBizOrderByTaskId(taskId));
+        return prefix + "/taskReports";
+    }
+
 
     /**
      * 完成报数
@@ -236,6 +231,44 @@ public class BizOrderController extends BaseController {
             logger.info("completeReports with variables {}", variables);
 
             orderProcessService.completeReports(orderVo, variables);
+
+            return success("任务已完成");
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, e});
+            return error("完成任务失败");
+        }
+    }
+
+    @GetMapping("/taskConfirmProduct/{taskId}")
+    public String taskConfirmProducts(@PathVariable("taskId") String taskId,  ModelMap mmap) {
+
+        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
+        mmap.put("bizOrder", order);
+
+        //获取最新的批复数据
+        Optional<Comment> previousTaskComment = orderProcessService.getPreviousTaskComment(order.getInstanceId());
+        if (previousTaskComment.isPresent()) {
+            mmap.put("reports", previousTaskComment.get().getFullMessage());
+        }
+
+        return prefix + "/taskConfirmProduct";
+    }
+
+    /**
+     * 门店确认结果
+     *
+     * @return
+     */
+    @RequestMapping(value = "/confirmProduct/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public AjaxResult confirmProduct(@PathVariable("taskId") String taskId,
+                                      @ModelAttribute("preloadLeave") BizOrderVo orderVo, HttpServletRequest request) {
+        Enumeration<String> parameterNames = request.getParameterNames();
+        try {
+            Map<String, Object> variables = transToVariables(request, parameterNames);
+            logger.info("confirmProduct with variables {}", variables);
+
+            orderProcessService.confirmProduct(orderVo, variables);
 
             return success("任务已完成");
         } catch (Exception e) {

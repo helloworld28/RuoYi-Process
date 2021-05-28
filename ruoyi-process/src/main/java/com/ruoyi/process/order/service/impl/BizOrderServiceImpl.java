@@ -1,12 +1,15 @@
 package com.ruoyi.process.order.service.impl;
 
+import cn.hutool.extra.pinyin.PinyinUtil;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.process.domain.BizOrderSeq;
 import com.ruoyi.process.order.domain.BizOrder;
 import com.ruoyi.process.order.domain.BizOrderVo;
 import com.ruoyi.process.order.mapper.BizOrderMapper;
 import com.ruoyi.process.order.service.IBizOrderService;
+import com.ruoyi.process.service.IBizOrderSeqService;
 import com.ruoyi.process.todoitem.service.IBizTodoItemService;
 import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.mapper.SysUserMapper;
@@ -18,6 +21,7 @@ import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,28 +41,23 @@ import java.util.List;
 @Service
 public class BizOrderServiceImpl implements IBizOrderService {
     private Logger logger = LoggerFactory.getLogger(BizOrderServiceImpl.class);
-
+    @Autowired
     private BizOrderMapper bizOrderMapper;
-
+    @Autowired
     private IdentityService identityService;
-
+    @Autowired
     private RuntimeService runtimeService;
-
+    @Autowired
     private IBizTodoItemService todoItemService;
-
+    @Autowired
     private TaskService taskService;
-
+    @Autowired
     private SysUserMapper userMapper;
 
+    @Autowired
+    private IBizOrderSeqService orderSeqService;
 
-    public BizOrderServiceImpl(BizOrderMapper bizOrderMapper, IdentityService identityService, RuntimeService runtimeService, IBizTodoItemService todoItemService, TaskService taskService, SysUserMapper userMapper) {
-        this.bizOrderMapper = bizOrderMapper;
-        this.identityService = identityService;
-        this.runtimeService = runtimeService;
-        this.todoItemService = todoItemService;
-        this.taskService = taskService;
-        this.userMapper = userMapper;
-    }
+
 
     /**
      * 查询订单
@@ -90,8 +89,25 @@ public class BizOrderServiceImpl implements IBizOrderService {
      */
     @Override
     public int insertBizOrder(BizOrder bizOrder) {
+
+        String loginName = ShiroUtils.getLoginName();
+        bizOrder.setCreateBy(loginName);
+        bizOrder.setApplyUserId(loginName);
+
+        String userName = ShiroUtils.getSysUser().getUserName();
+        bizOrder.setApplyUserName(userName);
+
+        BizOrderSeq orderSeq = orderSeqService.selectBizOrderSeqByUserId(loginName);
+        String preOrder = PinyinUtil.getFirstLetter(userName, "");
+        String orderId = preOrder + orderSeq.getOrderSeq();
+        orderSeq.setOrderSeq(orderSeq.getOrderSeq() + 1);
+        orderSeqService.updateBizOrderSeq(orderSeq);
+
+        bizOrder.setOrderId(orderId);
+
         return bizOrderMapper.insertBizOrder(bizOrder);
     }
+
 
     /**
      * 修改订单

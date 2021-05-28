@@ -6,10 +6,10 @@
     <userTask id="acceptOrder" name="采购员接单" activiti:candidateGroups="deptLeader"></userTask>
     <userTask id="reports" name="采购员报数，色差" activiti:assignee="${buyer}"></userTask>
     <sequenceFlow id="flow2" sourceRef="acceptOrder" targetRef="reports"></sequenceFlow>
-    <userTask id="comfirmProduct" name="门店确认" activiti:assignee="${applyUserId}"></userTask>
-    <sequenceFlow id="flow3" sourceRef="reports" targetRef="comfirmProduct"></sequenceFlow>
+    <userTask id="confirmProduct" name="门店确认" activiti:assignee="${applyUserId}"></userTask>
+    <sequenceFlow id="flow3" sourceRef="reports" targetRef="confirmProduct"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow4" sourceRef="comfirmProduct" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="confirmProduct" targetRef="exclusivegateway1"></sequenceFlow>
     <sequenceFlow id="flow7" name="不合要求" sourceRef="exclusivegateway1" targetRef="reports">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!storeConfirmed}]]></conditionExpression>
     </sequenceFlow>
@@ -55,7 +55,7 @@
       <bpmndi:BPMNShape bpmnElement="reports" id="BPMNShape_reports">
         <omgdc:Bounds height="55.0" width="196.0" x="440.0" y="138.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="comfirmProduct" id="BPMNShape_comfirmProduct">
+      <bpmndi:BPMNShape bpmnElement="confirmProduct" id="BPMNShape_confirmProduct">
         <omgdc:Bounds height="55.0" width="105.0" x="678.0" y="138.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">

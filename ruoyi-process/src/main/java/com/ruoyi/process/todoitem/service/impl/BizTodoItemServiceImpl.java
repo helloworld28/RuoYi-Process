@@ -134,7 +134,7 @@ public class BizTodoItemServiceImpl implements IBizTodoItemService {
             BizTodoItem newItem = new BizTodoItem();
             BeanUtils.copyProperties(todoItem, newItem);
             newItem.setTaskId(task.getId());
-            newItem.setTaskName("task" + task.getTaskDefinitionKey().substring(0, 1).toUpperCase() + task.getTaskDefinitionKey().substring(1));
+            newItem.setTaskName("task" + StringUtils.capitalize(task.getTaskDefinitionKey()));
             newItem.setNodeName(task.getName());
             String assignee = task.getAssignee();
             if (StringUtils.isNotBlank(assignee)) {
