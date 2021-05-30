@@ -6,6 +6,7 @@ import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
 import com.ruoyi.process.domain.BizOrderSeq;
+import com.ruoyi.process.order.OrderStatus;
 import com.ruoyi.process.order.domain.BizOrder;
 import com.ruoyi.process.order.domain.BizOrderVo;
 import com.ruoyi.process.order.mapper.BizOrderMapper;
@@ -57,7 +58,6 @@ public class BizOrderServiceImpl implements IBizOrderService {
 
     @Autowired
     private IBizOrderSeqService orderSeqService;
-
 
 
     /**
@@ -174,7 +174,7 @@ public class BizOrderServiceImpl implements IBizOrderService {
         taskService.complete(bizOrderVo.getTaskId(), variables);
 
 
-        order.setStatus(10);
+        order.setStatus(OrderStatus.WAITING_REPORT.getValue());
         bizOrderMapper.updateBizOrder(order);
 
         todoItemService.updateToDoItemList(bizOrderVo.getTaskId(), ShiroUtils.getLoginName(), ShiroUtils.getSysUser().getUserName());

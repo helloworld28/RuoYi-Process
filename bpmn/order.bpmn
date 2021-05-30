@@ -14,9 +14,9 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!storeConfirmed}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="getGoods" name="采购员拿货" activiti:assignee="${buyer}"></userTask>
-    <userTask id="instock" name="采购员入仓贴标签" activiti:assignee="${buyer}"></userTask>
-    <sequenceFlow id="flow9" sourceRef="getGoods" targetRef="instock"></sequenceFlow>
-    <userTask id="confirnPaid" name="门店确认收款" activiti:assignee="${applyUserId}"></userTask>
+    <userTask id="inStock" name="采购员入仓贴标签" activiti:assignee="${buyer}"></userTask>
+    <sequenceFlow id="flow9" sourceRef="getGoods" targetRef="inStock"></sequenceFlow>
+    <userTask id="confirmPaid" name="门店确认收款" activiti:assignee="${applyUserId}"></userTask>
     <userTask id="createInvoice" name="门店开具发货单" activiti:assignee="${applyUserId}"></userTask>
     <userTask id="ship" name="仓库内勤发货" activiti:candidateGroups="neiqin"></userTask>
     <sequenceFlow id="flow12" sourceRef="createInvoice" targetRef="parallelgateway2"></sequenceFlow>
@@ -28,11 +28,11 @@
     <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
     <parallelGateway id="parallelgateway2" name="Parallel Gateway"></parallelGateway>
     <sequenceFlow id="flow15" sourceRef="parallelgateway1" targetRef="getGoods"></sequenceFlow>
-    <sequenceFlow id="flow16" sourceRef="parallelgateway1" targetRef="confirnPaid"></sequenceFlow>
+    <sequenceFlow id="flow16" sourceRef="parallelgateway1" targetRef="confirmPaid"></sequenceFlow>
     <sequenceFlow id="flow17" sourceRef="parallelgateway2" targetRef="ship"></sequenceFlow>
     <userTask id="keeperConfirm" name="内勤审核" activiti:candidateGroups="neiqin"></userTask>
-    <sequenceFlow id="flow21" sourceRef="instock" targetRef="keeperConfirm"></sequenceFlow>
-    <sequenceFlow id="flow22" sourceRef="confirnPaid" targetRef="createInvoice"></sequenceFlow>
+    <sequenceFlow id="flow21" sourceRef="inStock" targetRef="keeperConfirm"></sequenceFlow>
+    <sequenceFlow id="flow22" sourceRef="confirmPaid" targetRef="createInvoice"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow23" sourceRef="keeperConfirm" targetRef="exclusivegateway2"></sequenceFlow>
     <sequenceFlow id="flow24" name="审核通过" sourceRef="exclusivegateway2" targetRef="parallelgateway2">
@@ -64,10 +64,10 @@
       <bpmndi:BPMNShape bpmnElement="getGoods" id="BPMNShape_getGoods">
         <omgdc:Bounds height="55.0" width="105.0" x="831.0" y="138.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="instock" id="BPMNShape_instock">
+      <bpmndi:BPMNShape bpmnElement="inStock" id="BPMNShape_inStock">
         <omgdc:Bounds height="55.0" width="105.0" x="1001.0" y="138.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="confirnPaid" id="BPMNShape_confirnPaid">
+      <bpmndi:BPMNShape bpmnElement="confirmPaid" id="BPMNShape_confirmPaid">
         <omgdc:Bounds height="55.0" width="105.0" x="942.0" y="312.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="createInvoice" id="BPMNShape_createInvoice">

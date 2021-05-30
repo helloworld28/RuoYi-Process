@@ -2,6 +2,7 @@ package com.ruoyi.process.order.service;
 
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.process.order.OrderStatus;
 import com.ruoyi.process.order.domain.BizOrder;
 import com.ruoyi.process.order.domain.BizOrderVo;
 import com.ruoyi.process.todoitem.service.IBizTodoItemService;
@@ -57,17 +58,16 @@ public class BizOrderProcessService {
         }
 
         BizOrder order = bizOrderService.selectBizOrderById(bizOrderVo.getId());
+        order.setStatus(OrderStatus.WAITING_CONFIRM.getValue());
+        bizOrderService.updateBizOrder(order);
 
         variables.put("applyUserId", order.getApplyUserId());
         logger.info("{} 签收并完成任务 {}", ShiroUtils.getLoginName(), bizOrderVo.getTaskId());
-        taskService.claim(bizOrderVo.getTaskId(), ShiroUtils.getLoginName());
-        taskService.complete(bizOrderVo.getTaskId(), variables);
-
+        completeTask(bizOrderVo, variables);
 
         // 下一节点处理人待办事项
         logger.info("{} 通知下一节点处理人待办事项 {}", ShiroUtils.getLoginName(), bizOrderVo.getTaskId());
-        todoItemService.updateToDoItemList(bizOrderVo.getTaskId(), ShiroUtils.getLoginName(), ShiroUtils.getSysUser().getUserName());
-        todoItemService.insertTodoItem(bizOrderVo.getInstanceId(), "订单业务", comment, "leave");
+        notifyNextActor(bizOrderVo, comment);
     }
 
     public void confirmProduct(BizOrderVo bizOrderVo, Map<String, Object> variables) {
@@ -80,19 +80,43 @@ public class BizOrderProcessService {
 
         //获取上个任务的执行人，即上次的采购员，把任务返回给采购员
         BizOrderVo order = getBizOrderByTaskId(bizOrderVo.getTaskId());
+        order.setStatus(OrderStatus.WAITING_BUY_INSTOCK.getValue());
+        bizOrderService.updateBizOrder(order);
+
         HistoricTaskInstance previousTask = findPreviousTask(order.getInstanceId());
         String buyer = previousTask.getAssignee();
         variables.put("buyer", previousTask.getAssignee());
 
 
         logger.info("{} 签收并完成任务 {}", ShiroUtils.getLoginName(), bizOrderVo.getTaskId());
-        taskService.claim(bizOrderVo.getTaskId(), ShiroUtils.getLoginName());
-        taskService.complete(bizOrderVo.getTaskId(), variables);
+        completeTask(bizOrderVo, variables);
 
         // 下一节点处理人待办事项
         logger.info("{} 通知下一节点处理人待办事项 {}", ShiroUtils.getLoginName(), bizOrderVo.getTaskId());
+        notifyNextActor(bizOrderVo, comment);
+    }
+
+    private void notifyNextActor(BizOrderVo bizOrderVo, String comment) {
         todoItemService.updateToDoItemList(bizOrderVo.getTaskId(), ShiroUtils.getLoginName(), ShiroUtils.getSysUser().getUserName());
-        todoItemService.insertTodoItem(bizOrderVo.getInstanceId(), "订单业务", comment, "leave");
+        todoItemService.insertTodoItem(bizOrderVo.getInstanceId(), "订单业务", comment, "order");
+    }
+
+    private void completeTask(BizOrderVo bizOrderVo, Map<String, Object> variables) {
+        taskService.claim(bizOrderVo.getTaskId(), ShiroUtils.getLoginName());
+        taskService.complete(bizOrderVo.getTaskId(), variables);
+    }
+
+    public void confirmPaid(BizOrderVo bizOrderVo, Map<String, Object> variables) {
+        BizOrderVo order = getBizOrderByTaskId(bizOrderVo.getTaskId());
+        logger.info("更新订单[{}]为已付款", bizOrderVo.getOrderId());
+        order.setPaid(1);
+        bizOrderService.updateBizOrder(order);
+
+        logger.info("完成确认收款任务[{}]", bizOrderVo.getTaskId());
+        completeTask(bizOrderVo, variables);
+
+        logger.info("通知下个节点任务");
+        notifyNextActor(bizOrderVo, null);
     }
 
     public Optional<Comment> getPreviousTaskComment(String processInstanceId) {

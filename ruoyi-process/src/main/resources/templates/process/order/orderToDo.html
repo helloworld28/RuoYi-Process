@@ -35,7 +35,7 @@
                                 <input type="text" name="applyUserId"/>
                             </li>
                             <li>
-                                <p>提交用户名称：</p>
+                                <p>报单员：</p>
                                 <input type="text" name="applyUserName"/>
                             </li>
                             <li class="select-time">
@@ -86,9 +86,9 @@
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
                 modalName: "订单",
-                columns: [{
-                    checkbox: true
-                },
+                sortName: "updateTime",
+                sortOrder: "desc",
+                columns: [
                 {
                     field : 'id', 
                     title : '订单ID',
@@ -97,11 +97,12 @@
                 {
                     field : 'orderId', 
                     title : '订单ID',
-                    visible: false
+                    visible: true
                 },
                 {
-                    field : 'customerId', 
-                    title : '客户ID'
+                    field : 'customerId',
+                    title : '客户ID',
+                    visible: false
                 },
                 {
                     field : 'customerName', 
@@ -121,10 +122,7 @@
                 },
                 {
                     field : 'specialDemands', 
-                    title : '客户要求',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(specialDemandsDatas, value);
-                    }
+                    title : '客户要求'
                 },
                 {
                     field : 'purchased', 
@@ -160,8 +158,8 @@
                 },
 
                 {
-                    field : 'applyBy',
-                    title : '提交用户名称'
+                    field : 'applyUserName',
+                    title : '报单员'
                 },
                 {
                     field : 'createTime', 
@@ -169,7 +167,9 @@
                 },
                 {
                     field : 'updateTime', 
-                    title : '更新时间'
+                    title : '更新时间',
+                    order: 'desc',
+                    sortable: true
                 },
                 {
                     field : 'status', 

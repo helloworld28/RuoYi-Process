@@ -2,6 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <th:block th:include="include :: header('订单列表')" />
+
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -101,6 +102,8 @@
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
                 modalName: "订单",
+                sortName: "updateTime",
+                sortOrder: "desc",
                 columns: [{
                     checkbox: true
                 },
@@ -115,7 +118,8 @@
                 },
                 {
                     field : 'customerId', 
-                    title : '客户ID'
+                    title : '客户ID',
+                    visible: false
                 },
                 {
                     field : 'customerName', 
@@ -131,14 +135,12 @@
                 },
                 {
                     field : 'quatity', 
-                    title : '数量'
+                    title : '数量（米）',
+                    align: 'right'
                 },
                 {
                     field : 'specialDemands', 
-                    title : '客户要求',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(specialDemandsDatas, value);
-                    }
+                    title : '客户要求'
                 },
                 {
                     field : 'purchased', 
@@ -174,16 +176,20 @@
                 },
 
                 {
-                    field : 'applyBy',
-                    title : '提交用户名称'
+                    field : 'applyUserName',
+                    title : '报单员',
                 },
                 {
                     field : 'createTime', 
-                    title : '创建时间'
+                    title : '创建时间',
+                    order: 'desc',
+                    sortable: true
                 },
                 {
                     field : 'updateTime', 
-                    title : '更新时间'
+                    title : '更新时间',
+                    order: 'desc',
+                    sortable: true
                 },
                 {
                     field : 'status', 

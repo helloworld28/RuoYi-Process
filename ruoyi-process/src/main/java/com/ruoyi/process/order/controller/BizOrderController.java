@@ -201,7 +201,7 @@ public class BizOrderController extends BaseController {
     public ModelAndView showVerifyDialog(@PathVariable("taskId") String taskId) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         String verifyName = StringUtils.capitalize(task.getTaskDefinitionKey());
-        return new ModelAndView("forward:/" + prefix + "/task" + verifyName+ "/" + taskId);
+        return new ModelAndView("forward:/" + prefix + "/task" + verifyName + "/" + taskId);
     }
 
     @GetMapping("/taskAcceptOrder/{taskId}")
@@ -212,6 +212,12 @@ public class BizOrderController extends BaseController {
 
     @GetMapping("/taskReports/{taskId}")
     public String taskReports(@PathVariable String taskId, ModelMap modelMap) {
+        modelMap.put("bizOrder", orderProcessService.getBizOrderByTaskId(taskId));
+        return prefix + "/taskReports";
+    }
+
+    @GetMapping("/taskConfirmPaid/{taskId}")
+    public String taskConfirmPaid(@PathVariable String taskId, ModelMap modelMap) {
         modelMap.put("bizOrder", orderProcessService.getBizOrderByTaskId(taskId));
         return prefix + "/taskReports";
     }
@@ -241,7 +247,7 @@ public class BizOrderController extends BaseController {
     }
 
     @GetMapping("/taskConfirmProduct/{taskId}")
-    public String taskConfirmProducts(@PathVariable("taskId") String taskId,  ModelMap mmap) {
+    public String taskConfirmProducts(@PathVariable("taskId") String taskId, ModelMap mmap) {
 
         BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
         mmap.put("bizOrder", order);
@@ -262,14 +268,35 @@ public class BizOrderController extends BaseController {
      */
     @RequestMapping(value = "/confirmProduct/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
-    public AjaxResult confirmProduct(@PathVariable("taskId") String taskId,
-                                      @ModelAttribute("preloadLeave") BizOrderVo orderVo, HttpServletRequest request) {
+    public AjaxResult confirmProduct(@PathVariable("taskId") String taskId, BizOrderVo orderVo, HttpServletRequest request) {
         Enumeration<String> parameterNames = request.getParameterNames();
         try {
             Map<String, Object> variables = transToVariables(request, parameterNames);
             logger.info("confirmProduct with variables {}", variables);
 
             orderProcessService.confirmProduct(orderVo, variables);
+
+            return success("任务已完成");
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, e});
+            return error("完成任务失败");
+        }
+    }
+
+    /**
+     * 确认收款
+     *
+     * @return
+     */
+    @RequestMapping(value = "/confirmPaid/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public AjaxResult confirmPaid(@PathVariable("taskId") String taskId, BizOrderVo orderVo, HttpServletRequest request) {
+        Enumeration<String> parameterNames = request.getParameterNames();
+        try {
+            Map<String, Object> variables = transToVariables(request, parameterNames);
+            logger.info("confirmPaid with variables {}", variables);
+
+            orderProcessService.confirmPaid(orderVo, variables);
 
             return success("任务已完成");
         } catch (Exception e) {

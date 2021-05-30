@@ -2,6 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('新增订单')" />
+    <th:block th:include="include :: datetimepicker-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -15,7 +16,7 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">客户名称：</label>
                 <div class="col-sm-8">
-                    <input name="customerName" class="form-control" type="text" required>
+                    <i0nput name="customerName" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">    
@@ -34,6 +35,14 @@
                 <label class="col-sm-3 control-label">数量：</label>
                 <div class="col-sm-8">
                     <input name="quatity" class="form-control" type="text" required>
+                </div>
+            </div>-
+            <div class="form-group">
+                <label class="col-sm-3 control-label">客户要求：</label>
+                <div class="col-sm-8">
+                    <select name="specialDemands" class="form-control m-b" th:with="type=${@dict.getType('biz_order_special_demands')}" >
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
                 </div>
             </div>
             <div class="form-group">    
@@ -56,7 +65,10 @@
             <div class="form-group">    
                 <label class="col-sm-3 control-label">提货日期：</label>
                 <div class="col-sm-8">
-                    <input name="pickUpDate" class="form-control" type="text" required>
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input type="text" name="pickUpDate" class="form-control" id="pickUpDate" placeholder="yyyy-MM-dd" required>
+                    </div>
                 </div>
             </div>
             <div class="form-group">    
@@ -85,6 +97,7 @@
         </form>
     </div>
     <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
     <script type="text/javascript">
         var prefix = ctx + "process/order"
         $("#form-order-add").validate({
@@ -96,6 +109,20 @@
                 $.operate.save(prefix + "/add", $('#form-order-add').serialize());
             }
         }
+
+
+        $(function (){
+
+            layui.use('laydate', function(){
+                var laydate = layui.laydate;
+
+                var startDate = laydate.render({
+                    elem: '#pickUpDate',
+                    min: 1,
+                    max: 7
+                });
+            });
+        });
     </script>
 </body>
 </html>
