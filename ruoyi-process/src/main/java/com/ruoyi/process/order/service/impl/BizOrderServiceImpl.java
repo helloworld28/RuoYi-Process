@@ -1,6 +1,7 @@
 package com.ruoyi.process.order.service.impl;
 
 import cn.hutool.extra.pinyin.PinyinUtil;
+import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.util.ShiroUtils;
@@ -76,6 +77,7 @@ public class BizOrderServiceImpl implements IBizOrderService {
      * @param bizOrder 订单
      * @return 订单
      */
+    @DataScope(deptAlias = "d", userAlias = "u")
     @Override
     public List<BizOrder> selectBizOrderList(BizOrder bizOrder) {
         return bizOrderMapper.selectBizOrderList(bizOrder);

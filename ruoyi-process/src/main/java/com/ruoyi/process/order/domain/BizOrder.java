@@ -75,8 +75,8 @@ public class BizOrder extends BaseEntity {
     /** 流程ID */
     @Excel(name = "流程ID")
     private String instanceId;
-
     /** 状态 */
+
     @Excel(name = "状态")
     private Integer status;
 

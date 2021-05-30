@@ -3,7 +3,7 @@
   <process id="orderProcess" name="订单流程" isExecutable="true">
     <documentation>订单流程</documentation>
     <startEvent id="orderStartEvent" name="订单开始"></startEvent>
-    <userTask id="acceptOrder" name="采购员接单" activiti:candidateGroups="deptLeader"></userTask>
+    <userTask id="acceptOrder" name="采购员接单" activiti:candidateGroups="caigouyuan"></userTask>
     <userTask id="reports" name="采购员报数，色差" activiti:assignee="${buyer}"></userTask>
     <sequenceFlow id="flow2" sourceRef="acceptOrder" targetRef="reports"></sequenceFlow>
     <userTask id="confirmProduct" name="门店确认" activiti:assignee="${applyUserId}"></userTask>
@@ -13,12 +13,12 @@
     <sequenceFlow id="flow7" name="不合要求" sourceRef="exclusivegateway1" targetRef="reports">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!storeConfirmed}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="getGoods" name="采购员拿货" activiti:candidateGroups="deptLeader"></userTask>
-    <userTask id="instock" name="采购员入仓贴标签" activiti:candidateGroups="deptLeader"></userTask>
+    <userTask id="getGoods" name="采购员拿货" activiti:assignee="${buyer}"></userTask>
+    <userTask id="instock" name="采购员入仓贴标签" activiti:assignee="${buyer}"></userTask>
     <sequenceFlow id="flow9" sourceRef="getGoods" targetRef="instock"></sequenceFlow>
     <userTask id="confirnPaid" name="门店确认收款" activiti:assignee="${applyUserId}"></userTask>
     <userTask id="createInvoice" name="门店开具发货单" activiti:assignee="${applyUserId}"></userTask>
-    <userTask id="ship" name="仓库内勤发货" activiti:candidateGroups="hr"></userTask>
+    <userTask id="ship" name="仓库内勤发货" activiti:candidateGroups="neiqin"></userTask>
     <sequenceFlow id="flow12" sourceRef="createInvoice" targetRef="parallelgateway2"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
     <sequenceFlow id="flow13" sourceRef="ship" targetRef="endevent1"></sequenceFlow>
@@ -30,7 +30,7 @@
     <sequenceFlow id="flow15" sourceRef="parallelgateway1" targetRef="getGoods"></sequenceFlow>
     <sequenceFlow id="flow16" sourceRef="parallelgateway1" targetRef="confirnPaid"></sequenceFlow>
     <sequenceFlow id="flow17" sourceRef="parallelgateway2" targetRef="ship"></sequenceFlow>
-    <userTask id="keeperConfirm" name="内勤审核" activiti:candidateGroups="hr"></userTask>
+    <userTask id="keeperConfirm" name="内勤审核" activiti:candidateGroups="neiqin"></userTask>
     <sequenceFlow id="flow21" sourceRef="instock" targetRef="keeperConfirm"></sequenceFlow>
     <sequenceFlow id="flow22" sourceRef="confirnPaid" targetRef="createInvoice"></sequenceFlow>
     <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>

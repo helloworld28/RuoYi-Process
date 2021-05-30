@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.process.mapper.BizOrderSeqMapper">
+    
+    <resultMap type="BizOrderSeq" id="BizOrderSeqResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="orderSeq"    column="order_seq"    />
+    </resultMap>
+
+    <sql id="selectBizOrderSeqVo">
+        select id, user_id, order_seq from biz_order_seq
+    </sql>
+
+    <select id="selectBizOrderSeqList" parameterType="BizOrderSeq" resultMap="BizOrderSeqResult">
+        <include refid="selectBizOrderSeqVo"/>
+        <where>  
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="orderSeq != null "> and order_seq = #{orderSeq}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizOrderSeqById" parameterType="Long" resultMap="BizOrderSeqResult">
+        <include refid="selectBizOrderSeqVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizOrderSeq" parameterType="BizOrderSeq" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_order_seq
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null  and userId != ''">user_id,</if>
+            <if test="orderSeq != null ">order_seq,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null  and userId != ''">#{userId},</if>
+            <if test="orderSeq != null ">#{orderSeq},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizOrderSeq" parameterType="BizOrderSeq">
+        update biz_order_seq
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null  and userId != ''">user_id = #{userId},</if>
+            <if test="orderSeq != null ">order_seq = #{orderSeq},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizOrderSeqById" parameterType="Long">
+        delete from biz_order_seq where id = #{id}
+    </delete>
+
+    <delete id="deleteBizOrderSeqByIds" parameterType="String">
+        delete from biz_order_seq where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
