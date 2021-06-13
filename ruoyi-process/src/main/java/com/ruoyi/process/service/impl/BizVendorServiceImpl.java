@@ -1,7 +1,9 @@
 package com.ruoyi.process.service.impl;
 
 import java.util.List;
+
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.process.domain.BizVendorVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.process.mapper.BizVendorMapper;
@@ -40,6 +42,17 @@ public class BizVendorServiceImpl implements IBizVendorService {
     @Override
     public List<BizVendor> selectBizVendorList(BizVendor bizVendor) {
         return bizVendorMapper.selectBizVendorList(bizVendor);
+    }
+
+    /**
+     * 查询供应商信息列表（带客户ID条件去判断是否买过）
+     *
+     * @param bizVendorVo
+     * @return
+     */
+    @Override
+    public List<BizVendorVo> selectBizVendorListWithCustomerId(BizVendorVo bizVendorVo) {
+        return bizVendorMapper.selectBizVendorListWithCustomerId(bizVendorVo);
     }
 
     /**

@@ -7,6 +7,7 @@
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-order_vendor-add">
             <input name="orderId"  hidden type="text" th:value="${orderId}">
+            <input name="customerId"  hidden type="text" th:value="${customerId}">
 
             <div class="form-group">
                 <label class="col-sm-3 control-label">供应商信息ID：</label>
@@ -58,7 +59,7 @@
         }
 
         function showDialogVendors() {
-            $.modal.open("请选择供应商", ctx+"process/vendor", 600, 300, doSubmit);
+            $.modal.open("请选择供应商", ctx+"process/vendor/listWithCustomerId/[[${customerId}]]", 600, 300, doSubmit);
 
 
         }

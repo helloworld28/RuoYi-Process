@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.process.mapper.BizVendorMapper">
     
-    <resultMap type="BizVendor" id="BizVendorResult">
+    <resultMap type="BizVendorVo" id="BizVendorResult">
         <result property="id"    column="id"    />
         <result property="itemNo"    column="item_no"    />
         <result property="colorCode"    column="color_code"    />
@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="bought"    column="bought"    />
     </resultMap>
 
     <sql id="selectBizVendorVo">
@@ -46,6 +47,51 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectBizVendorById" parameterType="Long" resultMap="BizVendorResult">
         <include refid="selectBizVendorVo"/>
         where id = #{id}
+    </select>
+
+    <select id="selectBizVendorListWithCustomerId" parameterType="BizVendorVo" resultMap="BizVendorResult">
+
+        SELECT
+        v.id,
+        v.item_no,
+        v.color_code,
+        v.vendor_name,
+        v.vendor_item_no,
+        v.vendor_color_code,
+        v.vendor_region,
+        v.vendor_price,
+        v.vendor_cylinder_no,
+        v.color_difference,
+        v.vendor_gap,
+        v.create_time,
+        v.create_by,
+        v.update_by,
+        v.update_time,
+        v.remark,
+        CASE
+        WHEN ov.vendor_id IS NULL THEN 0
+        ELSE   1
+        END AS bought
+        FROM
+        biz_vendor v
+        LEFT JOIN (
+        SELECT
+        ove.vendor_id
+        FROM
+        biz_order o,
+        biz_order_vendor ove
+        WHERE
+        o.order_id = ove.order_id
+        AND o.`status` = 100
+        AND o.customer_id = #{customerId}
+        ) ov ON v.id = ov.vendor_id
+        <where>
+            <if test="itemNo != null  and itemNo != ''"> and item_no = #{itemNo}</if>
+            <if test="colorCode != null  and colorCode != ''"> and color_code = #{colorCode}</if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name like concat('%', #{vendorName}, '%')</if>
+            <if test="vendorItemNo != null  and vendorItemNo != ''"> and vendor_item_no = #{vendorItemNo}</if>
+            <if test="vendorColorCode != null  and vendorColorCode != ''"> and vendor_color_code = #{vendorColorCode}</if>
+        </where>
     </select>
         
     <insert id="insertBizVendor" parameterType="BizVendor" useGeneratedKeys="true" keyProperty="id">
@@ -107,6 +153,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+
+
 
     <delete id="deleteBizVendorById" parameterType="Long">
         delete from biz_vendor where id = #{id}

@@ -1,6 +1,8 @@
 package com.ruoyi.process.service;
 
 import com.ruoyi.process.domain.BizVendor;
+import com.ruoyi.process.domain.BizVendorVo;
+
 import java.util.List;
 
 /**
@@ -25,6 +27,8 @@ public interface IBizVendorService {
      * @return 供应商信息集合
      */
     public List<BizVendor> selectBizVendorList(BizVendor bizVendor);
+
+    List<BizVendorVo> selectBizVendorListWithCustomerId(BizVendorVo bizVendorVo);
 
     /**
      * 新增供应商信息

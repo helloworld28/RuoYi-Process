@@ -21,6 +21,8 @@ public interface IBizOrderService {
      */
     public BizOrder selectBizOrderById(Long id);
 
+    public BizOrder selectBizOrderByOrderId(String orderId);
+
     /**
      * 查询订单列表
      *

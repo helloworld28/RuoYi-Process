@@ -20,6 +20,14 @@ public interface BizOrderMapper {
      */
     public BizOrder selectBizOrderById(Long id);
 
+    /**
+     * 查询订单
+     *
+     * @param orderId 订单ID
+     * @return 订单
+     */
+    public BizOrder selectBizOrderByOrderId(String orderId);
+
 
     /**
      * 查询订单列表

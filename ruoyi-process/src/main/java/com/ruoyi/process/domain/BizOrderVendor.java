@@ -6,10 +6,10 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 订单报数对象 biz_order_vendor
+ * 订单供应商信息对象 biz_order_vendor
  *
- * @author Powerjun Tech
- * @date 2021-06-01
+ * @author Xianlu Tech
+ * @date 2021-06-13
  */
 public class BizOrderVendor extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -17,12 +17,12 @@ public class BizOrderVendor extends BaseEntity {
     /** null */
     private Long id;
 
-    /** 订单ID */
-    @Excel(name = "订单ID")
+    /** null */
+    @Excel(name = "null")
     private String orderId;
 
-    /** 供应商信息ID */
-    @Excel(name = "供应商信息ID")
+    /** null */
+    @Excel(name = "null")
     private Long vendorId;
 
     /** 色号 */
@@ -40,6 +40,10 @@ public class BizOrderVendor extends BaseEntity {
     /** 出档口数量 */
     @Excel(name = "出档口数量")
     private Integer sellQuote;
+
+    /** 客户ID */
+    @Excel(name = "客户ID")
+    private String customerId;
 
     public void setId(Long id) {
         this.id = id;
@@ -90,6 +94,13 @@ public class BizOrderVendor extends BaseEntity {
     public Integer getSellQuote() {
         return sellQuote;
     }
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
 
     @Override
     public String toString() {
@@ -106,6 +117,7 @@ public class BizOrderVendor extends BaseEntity {
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("customerId", getCustomerId())
             .toString();
     }
 }

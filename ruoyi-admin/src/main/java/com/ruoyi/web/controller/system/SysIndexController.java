@@ -50,6 +50,6 @@ public class SysIndexController extends BaseController
     {
         mmap.put("version", Global.getVersion());
 //        return "main";
-        return "main_v2";
+        return "main_v1";
     }
 }

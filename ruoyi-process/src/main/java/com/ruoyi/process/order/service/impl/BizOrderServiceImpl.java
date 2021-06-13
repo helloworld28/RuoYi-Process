@@ -71,6 +71,11 @@ public class BizOrderServiceImpl implements IBizOrderService {
         return bizOrderMapper.selectBizOrderById(id);
     }
 
+    @Override
+    public BizOrder selectBizOrderByOrderId(String orderId) {
+        return bizOrderMapper.selectBizOrderByOrderId(orderId);
+    }
+
     /**
      * 查询订单列表
      *

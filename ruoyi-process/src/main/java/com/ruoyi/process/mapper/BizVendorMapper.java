@@ -1,6 +1,8 @@
 package com.ruoyi.process.mapper;
 
 import com.ruoyi.process.domain.BizVendor;
+import com.ruoyi.process.domain.BizVendorVo;
+
 import java.util.List;
 
 /**
@@ -57,4 +59,12 @@ public interface BizVendorMapper {
      * @return 结果
      */
     public int deleteBizVendorByIds(String[] ids);
+
+    /**
+     * 查询供应商信息带着客户ID条件
+     *
+     * @param bizVendorVo
+     * @return 结果 BizVendorVo 里带着该客户是否买信息
+     */
+    public List<BizVendorVo> selectBizVendorListWithCustomerId(BizVendorVo bizVendorVo);
 }

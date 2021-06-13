@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.process;
 
 import java.util.List;
+
+import com.ruoyi.process.domain.BizVendorVo;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,6 +50,24 @@ public class BizVendorController extends BaseController {
     public TableDataInfo list(BizVendor bizVendor) {
         startPage();
         List<BizVendor> list = bizVendorService.selectBizVendorList(bizVendor);
+        return getDataTable(list);
+    }
+
+    @RequiresPermissions("process:vendor:view")
+    @GetMapping("/listWithCustomerId/{customerId}")
+    public String listWithCustomerId(@PathVariable String customerId, ModelMap modelMap) {
+        modelMap.put("customerId", customerId);
+        return prefix + "/vendorSearch";
+    }
+
+
+    @RequiresPermissions("process:vendor:list")
+    @PostMapping("/list/{customerId}")
+    @ResponseBody
+    public TableDataInfo listByCustomerId(@PathVariable String customerId, BizVendorVo bizVendor) {
+        startPage();
+        bizVendor.setCustomerId(customerId);
+        List<BizVendorVo> list = bizVendorService.selectBizVendorListWithCustomerId(bizVendor);
         return getDataTable(list);
     }
 
@@ -108,7 +128,7 @@ public class BizVendorController extends BaseController {
      */
     @RequiresPermissions("process:vendor:remove")
     @Log(title = "供应商信息", businessType = BusinessType.DELETE)
-    @PostMapping( "/remove")
+    @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
         return toAjax(bizVendorService.deleteBizVendorByIds(ids));

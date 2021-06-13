@@ -2,6 +2,8 @@ package com.ruoyi.web.controller.process;
 
 import java.util.List;
 
+import com.ruoyi.process.order.domain.BizOrder;
+import com.ruoyi.process.order.service.IBizOrderService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,8 @@ public class BizOrderVendorController extends BaseController {
 
     @Autowired
     private IBizOrderVendorService bizOrderVendorService;
+    @Autowired
+    private IBizOrderService bizOrderService;
 
     @RequiresPermissions("process:order_vendor:view")
     @GetMapping()
@@ -77,8 +81,9 @@ public class BizOrderVendorController extends BaseController {
      * 新增订单报数
      */
     @GetMapping("/add")
-    public String add(@RequestParam String orderId, ModelMap modelMap) {
+    public String add(@RequestParam String orderId,@RequestParam String customerId, ModelMap modelMap) {
         modelMap.put("orderId", orderId);
+        modelMap.put("customerId", customerId);
         return prefix + "/add";
     }
 
