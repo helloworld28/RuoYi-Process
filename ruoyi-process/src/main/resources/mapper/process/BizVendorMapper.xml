@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.process.mapper.BizVendorMapper">
+    
+    <resultMap type="BizVendor" id="BizVendorResult">
+        <result property="id"    column="id"    />
+        <result property="itemNo"    column="item_no"    />
+        <result property="colorCode"    column="color_code"    />
+        <result property="vendorName"    column="vendor_name"    />
+        <result property="vendorItemNo"    column="vendor_item_no"    />
+        <result property="vendorColorCode"    column="vendor_color_code"    />
+        <result property="vendorRegion"    column="vendor_region"    />
+        <result property="vendorPrice"    column="vendor_price"    />
+        <result property="vendorCylinderNo"    column="vendor_cylinder_no"    />
+        <result property="colorDifference"    column="color_difference"    />
+        <result property="vendorGap"    column="vendor_gap"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBizVendorVo">
+        select id, item_no, color_code, vendor_name, vendor_item_no, vendor_color_code, vendor_region, vendor_price, vendor_cylinder_no, color_difference, vendor_gap, create_time, create_by, update_by, update_time, remark from biz_vendor
+    </sql>
+
+    <select id="selectBizVendorList" parameterType="BizVendor" resultMap="BizVendorResult">
+        <include refid="selectBizVendorVo"/>
+        <where>  
+            <if test="itemNo != null  and itemNo != ''"> and item_no = #{itemNo}</if>
+            <if test="colorCode != null  and colorCode != ''"> and color_code = #{colorCode}</if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name like concat('%', #{vendorName}, '%')</if>
+            <if test="vendorItemNo != null  and vendorItemNo != ''"> and vendor_item_no = #{vendorItemNo}</if>
+            <if test="vendorColorCode != null  and vendorColorCode != ''"> and vendor_color_code = #{vendorColorCode}</if>
+            <if test="vendorRegion != null  and vendorRegion != ''"> and vendor_region = #{vendorRegion}</if>
+            <if test="vendorPrice != null "> and vendor_price = #{vendorPrice}</if>
+            <if test="vendorCylinderNo != null  and vendorCylinderNo != ''"> and vendor_cylinder_no = #{vendorCylinderNo}</if>
+            <if test="colorDifference != null  and colorDifference != ''"> and color_difference = #{colorDifference}</if>
+            <if test="vendorGap != null  and vendorGap != ''"> and vendor_gap = #{vendorGap}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizVendorById" parameterType="Long" resultMap="BizVendorResult">
+        <include refid="selectBizVendorVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizVendor" parameterType="BizVendor" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_vendor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemNo != null  and itemNo != ''">item_no,</if>
+            <if test="colorCode != null  and colorCode != ''">color_code,</if>
+            <if test="vendorName != null  and vendorName != ''">vendor_name,</if>
+            <if test="vendorItemNo != null  and vendorItemNo != ''">vendor_item_no,</if>
+            <if test="vendorColorCode != null  and vendorColorCode != ''">vendor_color_code,</if>
+            <if test="vendorRegion != null  and vendorRegion != ''">vendor_region,</if>
+            <if test="vendorPrice != null ">vendor_price,</if>
+            <if test="vendorCylinderNo != null  and vendorCylinderNo != ''">vendor_cylinder_no,</if>
+            <if test="colorDifference != null  and colorDifference != ''">color_difference,</if>
+            <if test="vendorGap != null  and vendorGap != ''">vendor_gap,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemNo != null  and itemNo != ''">#{itemNo},</if>
+            <if test="colorCode != null  and colorCode != ''">#{colorCode},</if>
+            <if test="vendorName != null  and vendorName != ''">#{vendorName},</if>
+            <if test="vendorItemNo != null  and vendorItemNo != ''">#{vendorItemNo},</if>
+            <if test="vendorColorCode != null  and vendorColorCode != ''">#{vendorColorCode},</if>
+            <if test="vendorRegion != null  and vendorRegion != ''">#{vendorRegion},</if>
+            <if test="vendorPrice != null ">#{vendorPrice},</if>
+            <if test="vendorCylinderNo != null  and vendorCylinderNo != ''">#{vendorCylinderNo},</if>
+            <if test="colorDifference != null  and colorDifference != ''">#{colorDifference},</if>
+            <if test="vendorGap != null  and vendorGap != ''">#{vendorGap},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizVendor" parameterType="BizVendor">
+        update biz_vendor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemNo != null  and itemNo != ''">item_no = #{itemNo},</if>
+            <if test="colorCode != null  and colorCode != ''">color_code = #{colorCode},</if>
+            <if test="vendorName != null  and vendorName != ''">vendor_name = #{vendorName},</if>
+            <if test="vendorItemNo != null  and vendorItemNo != ''">vendor_item_no = #{vendorItemNo},</if>
+            <if test="vendorColorCode != null  and vendorColorCode != ''">vendor_color_code = #{vendorColorCode},</if>
+            <if test="vendorRegion != null  and vendorRegion != ''">vendor_region = #{vendorRegion},</if>
+            <if test="vendorPrice != null ">vendor_price = #{vendorPrice},</if>
+            <if test="vendorCylinderNo != null  and vendorCylinderNo != ''">vendor_cylinder_no = #{vendorCylinderNo},</if>
+            <if test="colorDifference != null  and colorDifference != ''">color_difference = #{colorDifference},</if>
+            <if test="vendorGap != null  and vendorGap != ''">vendor_gap = #{vendorGap},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizVendorById" parameterType="Long">
+        delete from biz_vendor where id = #{id}
+    </delete>
+
+    <delete id="deleteBizVendorByIds" parameterType="String">
+        delete from biz_vendor where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

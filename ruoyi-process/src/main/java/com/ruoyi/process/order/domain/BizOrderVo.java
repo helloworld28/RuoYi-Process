@@ -1,8 +1,10 @@
 package com.ruoyi.process.order.domain;
 
 import com.ruoyi.common.utils.bean.BeanUtils;
+import com.ruoyi.process.domain.BizOrderVendor;
 
 import java.util.Date;
+import java.util.List;
 
 public class BizOrderVo extends BizOrder {
     /**
@@ -29,6 +31,11 @@ public class BizOrderVo extends BizOrder {
      * 创建人
      */
     private String createUserName;
+
+    /**
+     * 订单供应商信息
+     */
+    private List<BizOrderVendor> orderVendors;
 
     public BizOrderVo() {
     }
@@ -79,4 +86,11 @@ public class BizOrderVo extends BizOrder {
     }
 
 
+    public List<BizOrderVendor> getOrderVendors() {
+        return orderVendors;
+    }
+
+    public void setOrderVendors(List<BizOrderVendor> orderVendors) {
+        this.orderVendors = orderVendors;
+    }
 }

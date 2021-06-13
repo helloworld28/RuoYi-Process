@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增供应商信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-vendor-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">货号：</label>
+                <div class="col-sm-8">
+                    <input name="itemNo" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">色号：</label>
+                <div class="col-sm-8">
+                    <input name="colorCode" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">供应商：</label>
+                <div class="col-sm-8">
+                    <input name="vendorName" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">供应商货号：</label>
+                <div class="col-sm-8">
+                    <input name="vendorItemNo" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">供应商色号：</label>
+                <div class="col-sm-8">
+                    <input name="vendorColorCode" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">供应商区域：</label>
+                <div class="col-sm-8">
+                    <input name="vendorRegion" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">供应商价格：</label>
+                <div class="col-sm-8">
+                    <input name="vendorPrice" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">缸号：</label>
+                <div class="col-sm-8">
+                    <input name="vendorCylinderNo" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">色差：</label>
+                <div class="col-sm-8">
+                    <input name="colorDifference" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">供应商空差：</label>
+                <div class="col-sm-8">
+                    <input name="vendorGap" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "process/vendor"
+        $("#form-vendor-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-vendor-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

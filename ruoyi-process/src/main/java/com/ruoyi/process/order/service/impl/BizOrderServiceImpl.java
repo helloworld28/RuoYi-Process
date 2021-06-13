@@ -20,6 +20,8 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.apache.commons.collections.list.TreeList;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -29,10 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 订单Service业务层处理
@@ -189,17 +189,29 @@ public class BizOrderServiceImpl implements IBizOrderService {
     @Transactional(readOnly = true)
     public List<BizOrderVo> findTodoTasks(BizOrderVo leave, String userId) {
         List<BizOrderVo> results = new ArrayList<>();
-        List<Task> tasks = new ArrayList<Task>();
 
-        // 根据当前人的ID查询
-        List<Task> todoList = taskService.createTaskQuery().processDefinitionKey("orderProcess").taskAssignee(userId).list();
 
         // 根据当前人未签收的任务
-        List<Task> unsignedTasks = taskService.createTaskQuery().processDefinitionKey("orderProcess").taskCandidateUser(userId).list();
+        List<Task> unsignedTasks = taskService
+                .createTaskQuery()
+                .processDefinitionKey("orderProcess")
+                .orderByTaskCreateTime()
+                .desc()
+                .taskCandidateUser(userId)
+                .list();
+        // 根据当前人的ID查询
+        List<Task> todoList = taskService.createTaskQuery()
+                .processDefinitionKey("orderProcess")
+                .orderByTaskCreateTime()
+                .desc()
+                .taskAssignee(userId)
+                .list();
+
 
         // 合并
-        tasks.addAll(todoList);
+        List<Task> tasks = new ArrayList<Task>(unsignedTasks.size() + todoList.size());
         tasks.addAll(unsignedTasks);
+        tasks.addAll(todoList);
 
         // 根据流程的业务ID查询实体并关联
         for (Task task : tasks) {
@@ -215,13 +227,29 @@ public class BizOrderServiceImpl implements IBizOrderService {
             BizOrder order = bizOrderMapper.selectBizOrderById(new Long(businessKey));
 
             BizOrderVo bizOrderVo = new BizOrderVo();
-            BeanUtils.copyProperties(order, bizOrderVo);
+            if (order != null) {
+                BeanUtils.copyProperties(order, bizOrderVo);
+            }
 
             bizOrderVo.setTaskId(task.getId());
             bizOrderVo.setTaskName(task.getName());
 
             results.add(bizOrderVo);
         }
+
+        results = sortByUpdateTime(results);
+
+        return results;
+    }
+
+    @NotNull
+    private List<BizOrderVo> sortByUpdateTime(List<BizOrderVo> results) {
+        results =  results.stream().sorted(new Comparator<BizOrderVo>() {
+            @Override
+            public int compare(BizOrderVo o1, BizOrderVo o2) {
+                return o2.getUpdateTime().compareTo(o1.getUpdateTime());
+            }
+        }).collect(Collectors.toList());
         return results;
     }
 

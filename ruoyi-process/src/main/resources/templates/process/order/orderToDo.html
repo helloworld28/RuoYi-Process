@@ -85,6 +85,7 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
+                detailUrl: prefix + "/edit/{id}",
                 modalName: "订单",
                 sortName: "updateTime",
                 sortOrder: "desc",
@@ -162,13 +163,8 @@
                     title : '报单员'
                 },
                 {
-                    field : 'createTime', 
-                    title : '创建时间'
-                },
-                {
                     field : 'updateTime', 
                     title : '更新时间',
-                    order: 'desc',
                     sortable: true
                 },
                 {
@@ -211,7 +207,7 @@
 
         function showVerifyDialog(taskId, taskName) {
             var url = prefix + "/showVerifyDialog/" + taskId;
-            $.modal.open(taskName, url);
+            $.modal.openTab(taskName, url);
         }
 
         /* 查看审批历史 */

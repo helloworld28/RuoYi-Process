@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:include="include :: header('采购员报数，色差')"/>
+    <th:block th:include="include :: header('调整报数，色差')"/>
 </head>
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -98,6 +98,13 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label class="col-sm-3 control-label">审核意见：</label>
+            <div class="col-sm-8 ">
+                <textarea name="remark" class="form-control text-danger" readonly>[[${latestComment}]]</textarea>
+            </div>
+        </div>
+
 
         <div class="form-group">
 
@@ -126,12 +133,11 @@
         </div>
 
         <div class="form-group">
-
             <label class="col-sm-3 control-label"></label>
 
-            <div class="col-sm-8 align-self-center">
-                <button type="button" class="btn btn-w-m btn-primary" onclick="submitHandler()">完成报数</button>
-            </div>
+             <div class="col-sm-8 align-self-center">
+                    <button type="button" class="btn btn-w-m btn-primary" onclick="submitHandler()">完成调整报数</button>
+             </div>
         </div>
 
 
@@ -168,25 +174,24 @@
             },
                 {
                     field: 'id',
-                    title: 'ID',
+                    title: 'null',
                     visible: false
                 },
                 {
                     field: 'orderId',
-                    title: '订单ID',
-                    visible: false
+                    title: '订单ID'
                 },
                 {
                     field: 'vendorId',
                     title: '供应商信息ID'
                 },
                 {
-                    field: 'itemNo',
-                    title: '货号'
-                },
-                {
                     field: 'colorCode',
                     title: '色号'
+                },
+                {
+                    field: 'itemNo',
+                    title: '货号'
                 },
                 {
                     field: 'buyQuote',
@@ -211,14 +216,14 @@
     function submitHandler() {
         if ($.validate.form()) {
 
-     /*       let rows = $("#bootstrap-table").bootstrapTable('getSelections');
-            let results = [];
+            let rows = $("#bootstrap-table").bootstrapTable('getSelections');
+            let results=[];
 
-            rows.forEach(function (row) {
-                let item = [row.vendorId, row.itemNo, row.colorCode, row.buyQuote, row.remark];
-                results.push(item)
-            });
-            $('#p_COM_comment').val(JSON.stringify(results));*/
+           rows.forEach(function (row) {
+               let item = [row.vendorId, row.itemNo, row.colorCode, row.buyQuote, row.remark];
+               results.push(item)
+           });
+           $('#p_COM_comment').val(JSON.stringify(results));
 
             $.operate.saveTab(prefix + "/completeReports/" + taskId, $('#form-order-edit').serialize());
         }

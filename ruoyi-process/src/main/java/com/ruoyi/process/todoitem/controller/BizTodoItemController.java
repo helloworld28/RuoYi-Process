@@ -74,7 +74,7 @@ public class BizTodoItemController extends BaseController {
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         request.setAttribute("id", processInstance.getBusinessKey());
         request.setAttribute("taskId", taskId);
-        return new ModelAndView("forward:/" + "process/" + module + "/" + formPageName + "/" + processInstance.getBusinessKey());
+        return new ModelAndView("forward:/" + "process/" + module + "/" + formPageName + "/" + taskId);
     }
 
     @RequiresPermissions("process:todoitem:view")

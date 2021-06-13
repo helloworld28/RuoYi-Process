@@ -1,114 +1,167 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:include="include :: header('确认收款')" />
+    <th:block th:include="include :: header('采购员报数，色差')"/>
 </head>
 <body class="white-bg">
-    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-order-edit" th:object="${bizOrder}">
-            <input name="id" th:field="*{id}" type="hidden">
-            <input name="taskId" th:field="*{taskId}" type="hidden">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-order-edit" th:object="${bizOrder}">
+        <input name="id" th:field="*{id}" type="hidden">
+        <input name="taskId" th:field="*{taskId}" type="hidden">
 
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">客户ID：</label>
-                <div class="col-sm-8">
-                    <input name="customerId" th:field="*{customerId}" class="form-control" type="text" readonly>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">客户ID：</label>
+            <div class="col-sm-8">
+                <input name="customerId" th:field="*{customerId}" class="form-control" type="text" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">客户名称：</label>
+            <div class="col-sm-8">
+                <input name="customerName" th:field="*{customerName}" class="form-control" type="text" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">货号：</label>
+            <div class="col-sm-8">
+                <input name="itemNo" th:field="*{itemNo}" class="form-control" type="text" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">色号：</label>
+            <div class="col-sm-8">
+                <input name="colorCode" th:field="*{colorCode}" class="form-control" type="text" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">数量：</label>
+            <div class="col-sm-8">
+                <input name="quatity" th:field="*{quatity}" class="form-control" type="text" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">客户要求：</label>
+            <div class="col-sm-8">
+                <input name="specialDemands" th:field="*{specialDemands}" class="form-control" type="text" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否已买过：</label>
+            <div class="col-sm-8">
+                <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_paid')}">
+                    <input type="radio" th:id="${'purchased_' + dict.dictCode}" name="purchased"
+                           th:value="${dict.dictValue}" th:field="*{purchased}" readonly>
+                    <label th:for="${'purchased_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">客户名称：</label>
-                <div class="col-sm-8">
-                    <input name="customerName" th:field="*{customerName}" class="form-control" type="text" readonly>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" >提货方式：</label>
+            <div class="col-sm-8">
+                <select name="pickUpWay" class="form-control m-b"
+                        th:with="type=${@dict.getType('biz_order_pick_up_way')}" readonly>
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"
+                            th:field="*{pickUpWay}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">提货日期：</label>
+            <div class="col-sm-8">
+                <input name="pickUpDate" th:field="*{pickUpDate}" class="form-control" type="text" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">是否已付款：</label>
+            <div class="col-sm-8">
+                <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_paid')}">
+                    <input type="radio" th:id="${'paid_' + dict.dictCode}" name="paid" th:value="${dict.dictValue}"
+                           th:field="*{paid}" readonly>
+                    <label th:for="${'paid_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">货号：</label>
-                <div class="col-sm-8">
-                    <input name="itemNo" th:field="*{itemNo}" class="form-control" type="text" readonly>
-                </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">优先级：</label>
+            <div class="col-sm-8">
+                <select name="priority" class="form-control m-b" th:with="type=${@dict.getType('biz_order_priority')}"
+                        readonly>
+                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"
+                            th:field="*{priority}"></option>
+                </select>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">色号：</label>
-                <div class="col-sm-8">
-                    <input name="colorCode" th:field="*{colorCode}" class="form-control" type="text" readonly>
-                </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <textarea name="remark" class="form-control" readonly>[[*{remark}]]</textarea>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">数量：</label>
-                <div class="col-sm-8">
-                    <input name="quatity" th:field="*{quatity}" class="form-control" type="text" readonly>
-                </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">采购员上报米数与色差：</label>
+            <div class="col-sm-8">
+                <table class="table" id="reportTable">
+                    <thead>
+                    <tr>
+                        <th>供应商ID</th>
+                        <th>货号</th>
+                        <th>色号</th>
+                        <th>米数</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item:${orderVendors}">
+                        <td th:text="${item.vendorId}"/>
+                        <td th:text="${item.itemNo}"/>
+                        <td th:text="${item.colorCode}"/>
+                        <td th:text="${item.buyQuote}"/>
+                        <td th:text="${item.remark}"/>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">客户要求：</label>
-                <div class="col-sm-8">
-                    <input name="specialDemands" th:field="*{specialDemands}" class="form-control" type="text" readonly>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">是否已买过：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_paid')}">
-                        <input type="radio" th:id="${'purchased_' + dict.dictCode}" name="purchased" th:value="${dict.dictValue}" th:field="*{purchased}" readonly>
-                        <label th:for="${'purchased_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">提货方式：</label>
-                <div class="col-sm-8">
-                    <select name="pickUpWay" class="form-control m-b" th:with="type=${@dict.getType('biz_order_pick_up_way')}" readonly>
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{pickUpWay}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">提货日期：</label>
-                <div class="col-sm-8">
-                    <input name="pickUpDate" th:field="*{pickUpDate}" class="form-control" type="text" readonly>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">是否已付款：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_paid')}">
-                        <input type="radio" th:id="${'paid_' + dict.dictCode}" name="paid" th:value="${dict.dictValue}" th:field="*{paid}" readonly>
-                        <label th:for="${'paid_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">优先级：</label>
-                <div class="col-sm-8">
-                    <select name="priority" class="form-control m-b" th:with="type=${@dict.getType('biz_order_priority')}" readonly>
-                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{priority}"></option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">备注：</label>
-                <div class="col-sm-8">
-                    <textarea name="remark" class="form-control" readonly>[[*{remark}]]</textarea>
-                </div>
-            </div>
+        </div>
 
+        <div class="form-group">
+            <div class="row align-items-center">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8 ">
+                    <button type="button" class="btn btn-w-m btn-primary" onclick="submitHandler()">确定已收款</button>
+                </div>
+            </div>
+        </div>
 
-        </form>
-    </div>
-    <th:block th:include="include :: footer" />
-    <script th:inline="javascript">
-        var prefix = ctx + "process/order";
-        var taskId = [[${taskId}]];
-        $("#form-order-edit").validate({
-            focusCleanup: true
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "process/order";
+    var taskId = [[${taskId}]];
+    $("#form-order-edit").validate({
+        focusCleanup: true
+    });
+
+    //format reports to a table
+    let reports = JSON.parse([[${reports}]]);
+    var body = $("#reportTable").find('tbody');
+    reports.forEach(function (report) {
+        let row = $("<tr>");
+        report.forEach(function (v) {
+            let col1 = $("<td>");
+            col1.text(v);
+            row.append(col1)
         });
+        body.append(row)
+    });
 
-        function submitHandler() {
-            if ($.validate.form()) {
 
-                $.operate.save(prefix + "/confirmPaid/"+taskId, $('#form-order-edit').serialize());
-            }
+    function submitHandler() {
+        if ($.validate.form()) {
+
+            $.operate.saveTab(prefix + "/confirmPaid/" + taskId, $('#form-order-edit').serialize());
         }
-    </script>
+    }
+</script>
 </body>
 </html>

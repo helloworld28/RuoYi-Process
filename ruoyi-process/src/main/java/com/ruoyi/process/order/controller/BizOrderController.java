@@ -9,10 +9,12 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.util.ShiroUtils;
+import com.ruoyi.process.domain.BizOrderVendor;
 import com.ruoyi.process.order.domain.BizOrder;
 import com.ruoyi.process.order.domain.BizOrderVo;
 import com.ruoyi.process.order.service.BizOrderProcessService;
 import com.ruoyi.process.order.service.IBizOrderService;
+import com.ruoyi.process.service.IBizOrderVendorService;
 import com.ruoyi.system.domain.SysUser;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -58,6 +60,9 @@ public class BizOrderController extends BaseController {
 
     @Autowired
     private BizOrderProcessService orderProcessService;
+
+    @Autowired
+    private IBizOrderVendorService orderVendorService;
 
     @RequiresPermissions("process:order:view")
     @GetMapping()
@@ -139,7 +144,6 @@ public class BizOrderController extends BaseController {
     }
 
 
-
     @PostMapping("/claimOrder")
     @ResponseBody
     public AjaxResult acceptOrder(BizOrderVo bizOrder) {
@@ -216,10 +220,48 @@ public class BizOrderController extends BaseController {
         return prefix + "/taskReports";
     }
 
+    @GetMapping("/taskConfirmProduct/{taskId}")
+    public String taskConfirmProducts(@PathVariable("taskId") String taskId, ModelMap mmap) {
+
+        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
+
+        mmap.put("bizOrder", order);
+        //报数数据
+        mmap.put("orderVendors", orderVendorService.selectBizOrderVendorList(order.getOrderId()));
+
+        //获取最新的批复数据
+        Optional<Comment> previousTaskComment = orderProcessService.getPreviousTaskComment(order.getInstanceId());
+        if (previousTaskComment.isPresent()) {
+            mmap.put("reports", previousTaskComment.get().getFullMessage());
+        }
+
+        return prefix + "/taskConfirmProduct";
+    }
+
+
     @GetMapping("/taskConfirmPaid/{taskId}")
     public String taskConfirmPaid(@PathVariable String taskId, ModelMap modelMap) {
-        modelMap.put("bizOrder", orderProcessService.getBizOrderByTaskId(taskId));
-        return prefix + "/taskReports";
+        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
+        modelMap.put("bizOrder", order);
+
+        //报数数据
+        modelMap.put("orderVendors", orderVendorService.selectBizOrderVendorList(order.getOrderId()));
+
+        return prefix + "/taskConfirmPaid";
+    }
+
+
+    @GetMapping("/taskAdjustReports/{taskId}")
+    public String taskAdjustReports(@PathVariable String taskId, ModelMap modelMap) {
+        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
+        modelMap.put("bizOrder", order);
+
+        //获取最新的批复数据
+        Optional<Comment> previousTaskComment = orderProcessService.getPreviousTaskComment(order.getInstanceId());
+        if (previousTaskComment.isPresent()) {
+            modelMap.put("latestComment", previousTaskComment.get().getFullMessage());
+        }
+        return prefix + "/taskAdjustReports";
     }
 
 
@@ -246,20 +288,6 @@ public class BizOrderController extends BaseController {
         }
     }
 
-    @GetMapping("/taskConfirmProduct/{taskId}")
-    public String taskConfirmProducts(@PathVariable("taskId") String taskId, ModelMap mmap) {
-
-        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
-        mmap.put("bizOrder", order);
-
-        //获取最新的批复数据
-        Optional<Comment> previousTaskComment = orderProcessService.getPreviousTaskComment(order.getInstanceId());
-        if (previousTaskComment.isPresent()) {
-            mmap.put("reports", previousTaskComment.get().getFullMessage());
-        }
-
-        return prefix + "/taskConfirmProduct";
-    }
 
     /**
      * 门店确认结果

@@ -86,6 +86,7 @@ public class BizOrderProcessService {
         HistoricTaskInstance previousTask = findPreviousTask(order.getInstanceId());
         String buyer = previousTask.getAssignee();
         variables.put("buyer", previousTask.getAssignee());
+        variables.put("paid", order.getPaid() == 1);
 
 
         logger.info("{} 签收并完成任务 {}", ShiroUtils.getLoginName(), bizOrderVo.getTaskId());
