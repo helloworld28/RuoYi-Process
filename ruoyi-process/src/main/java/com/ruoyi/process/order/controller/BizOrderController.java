@@ -205,6 +205,13 @@ public class BizOrderController extends BaseController {
     public ModelAndView showVerifyDialog(@PathVariable("taskId") String taskId) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         String verifyName = StringUtils.capitalize(task.getTaskDefinitionKey());
+
+        try {
+            BizOrderController.class.getDeclaredMethod("task"+verifyName, String.class, ModelMap.class);
+        } catch (NoSuchMethodException e) {
+            return taskCommon(taskId, new ModelMap());
+        }
+
         return new ModelAndView("forward:/" + prefix + "/task" + verifyName + "/" + taskId);
     }
 
@@ -221,7 +228,7 @@ public class BizOrderController extends BaseController {
     }
 
     @GetMapping("/taskConfirmProduct/{taskId}")
-    public String taskConfirmProducts(@PathVariable("taskId") String taskId, ModelMap mmap) {
+    public String taskConfirmProduct(@PathVariable("taskId") String taskId, ModelMap mmap) {
 
         BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
 
@@ -262,6 +269,20 @@ public class BizOrderController extends BaseController {
             modelMap.put("latestComment", previousTaskComment.get().getFullMessage());
         }
         return prefix + "/taskAdjustReports";
+    }
+
+
+    public ModelAndView taskCommon( String taskId, ModelMap modelMap) {
+        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
+        modelMap.put("bizOrder", order);
+
+        Task task = orderProcessService.getTaskByTaskId(taskId);
+        modelMap.put("operationName", task.getName());
+        //报数数据
+        List<BizOrderVendor> orderVendors = orderVendorService.selectBizOrderVendorList(order.getOrderId());
+        modelMap.put("orderVendors", orderVendors);
+
+       return new ModelAndView(prefix + "/taskCommon", modelMap);
     }
 
 
@@ -325,6 +346,28 @@ public class BizOrderController extends BaseController {
             logger.info("confirmPaid with variables {}", variables);
 
             orderProcessService.confirmPaid(orderVo, variables);
+
+            return success("任务已完成");
+        } catch (Exception e) {
+            logger.error("error on complete task {}, variables={}", new Object[]{taskId, e});
+            return error("完成任务失败");
+        }
+    }
+
+    /**
+     * 通用确认操作
+     *
+     * @return
+     */
+    @RequestMapping(value = "/commonConfirm/{taskId}", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    public AjaxResult commonConfirm(@PathVariable("taskId") String taskId, BizOrderVo orderVo, HttpServletRequest request) {
+        Enumeration<String> parameterNames = request.getParameterNames();
+        try {
+            Map<String, Object> variables = transToVariables(request, parameterNames);
+            logger.info("commonConfirm with variables {}", variables);
+
+            orderProcessService.commonConfirm(orderVo, variables);
 
             return success("任务已完成");
         } catch (Exception e) {

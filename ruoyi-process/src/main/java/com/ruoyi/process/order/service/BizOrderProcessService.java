@@ -120,6 +120,26 @@ public class BizOrderProcessService {
         notifyNextActor(bizOrderVo, null);
     }
 
+    public void commonConfirm(BizOrderVo bizOrderVo, Map<String, Object> variables) {
+        BizOrderVo order = getBizOrderByTaskId(bizOrderVo.getTaskId());
+
+        //1. 保存批注
+        String comment = (String) variables.get("comment");
+        if (StringUtils.isNotEmpty(comment)) {
+            logger.info("{} 保存批注 {} {}", ShiroUtils.getLoginName(), bizOrderVo.getTaskId(), comment);
+            identityService.setAuthenticatedUserId(ShiroUtils.getLoginName());
+            Comment comment1 = taskService.addComment(bizOrderVo.getTaskId(), bizOrderVo.getInstanceId(), comment);
+        }
+
+        //2. 完成任务
+        logger.info("完成任务[{}]", bizOrderVo.getTaskId());
+        completeTask(bizOrderVo, variables);
+
+        //3. 通知下个节点任务
+        logger.info("通知下个节点任务");
+        notifyNextActor(bizOrderVo, null);
+    }
+
     public Optional<Comment> getPreviousTaskComment(String processInstanceId) {
         HistoricTaskInstance previousTask = findPreviousTask(processInstanceId);
         List<Comment> taskComments = taskService.getTaskComments(previousTask.getId());
@@ -132,7 +152,7 @@ public class BizOrderProcessService {
                 processInstanceId(processInstanceId).orderByHistoricTaskInstanceEndTime().desc().list().get(0);
     }
 
-    public BizOrderVo getBizOrderByTaskId(@PathVariable String taskId) {
+    public BizOrderVo getBizOrderByTaskId(String taskId) {
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(task.getProcessInstanceId()).singleResult();
         BizOrder order = bizOrderService.selectBizOrderById(new Long(processInstance.getBusinessKey()));
@@ -140,6 +160,10 @@ public class BizOrderProcessService {
         bizOrderVo.setTaskId(taskId);
         return bizOrderVo;
 
+    }
+
+    public Task getTaskByTaskId(String taskId) {
+        return taskService.createTaskQuery().taskId(taskId).singleResult();
     }
 
 }

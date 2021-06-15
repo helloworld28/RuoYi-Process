@@ -112,15 +112,15 @@
 
             <div class="col-sm-8 ">
                 <div class="btn-group-sm" id="toolbar" role="group">
-                    <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="process:order:add">
+                    <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="process:order_vendor:add">
                         <i class="fa fa-plus"></i> 添加
                     </a>
                     <a class="btn btn-primary single disabled" onclick="$.operate.edit()"
-                       shiro:hasPermission="process:order:edit">
+                       shiro:hasPermission="process:order_vendor:edit">
                         <i class="fa fa-edit"></i> 修改
                     </a>
                     <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
-                       shiro:hasPermission="process:order:remove">
+                       shiro:hasPermission="process:order_vendor:remove">
                         <i class="fa fa-remove"></i> 删除
                     </a>
 
@@ -216,14 +216,8 @@
     function submitHandler() {
         if ($.validate.form()) {
 
-            let rows = $("#bootstrap-table").bootstrapTable('getSelections');
-            let results=[];
 
-           rows.forEach(function (row) {
-               let item = [row.vendorId, row.itemNo, row.colorCode, row.buyQuote, row.remark];
-               results.push(item)
-           });
-           $('#p_COM_comment').val(JSON.stringify(results));
+           $('#p_COM_comment').val("重新调整报数");
 
             $.operate.saveTab(prefix + "/completeReports/" + taskId, $('#form-order-edit').serialize());
         }

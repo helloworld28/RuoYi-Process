@@ -68,8 +68,8 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('process:order:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('process:order:remove')}]];
+        var editFlag = [[${@permission.hasPermi('process:order:todoView')}]];
+        var removeFlag = [[${@permission.hasPermi('process:order:todoView')}]];
         var specialDemandsDatas = [[${@dict.getType('biz_order_special_demands')}]];
         var purchasedDatas = [[${@dict.getType('biz_order_paid')}]];
         var pickUpWayDatas = [[${@dict.getType('biz_order_pick_up_way')}]];

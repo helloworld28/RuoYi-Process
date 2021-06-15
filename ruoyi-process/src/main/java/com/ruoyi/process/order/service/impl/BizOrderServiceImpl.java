@@ -192,7 +192,7 @@ public class BizOrderServiceImpl implements IBizOrderService {
      * 查询待办任务
      */
     @Transactional(readOnly = true)
-    public List<BizOrderVo> findTodoTasks(BizOrderVo leave, String userId) {
+    public List<BizOrderVo> findTodoTasks(BizOrderVo orderVo, String userId) {
         List<BizOrderVo> results = new ArrayList<>();
 
 
@@ -223,7 +223,7 @@ public class BizOrderServiceImpl implements IBizOrderService {
             String processInstanceId = task.getProcessInstanceId();
 
             // 条件过滤 1
-            if (StringUtils.isNotBlank(leave.getInstanceId()) && !leave.getInstanceId().equals(processInstanceId)) {
+            if (StringUtils.isNotBlank(orderVo.getInstanceId()) && !orderVo.getInstanceId().equals(processInstanceId)) {
                 continue;
             }
 
