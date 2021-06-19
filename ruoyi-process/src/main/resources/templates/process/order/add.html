@@ -31,13 +31,13 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">货号：</label>
                 <div class="col-sm-8">
-                    <input name="itemNo" class="form-control" type="text" required>
+                    <input name="itemNo" id="itemNo" class="form-control" type="text" isItemNo="true" required>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">色号：</label>
                 <div class="col-sm-8">
-                    <input name="colorCode" class="form-control" type="text" required>
+                    <input name="colorCode" class="form-control" type="text" isColorCode="true" required>
                 </div>
             </div>
             <div class="form-group">
@@ -124,7 +124,7 @@
         var testBsSuggest = $("#suggest-demo-1").bsSuggest({
             url: ctx + "process/customer/listByUserId",
             idField: "customerId",
-            keyField: "phone",
+            keyField: "customerId",
             effectiveFields:['customerId', 'name', 'phone'],
             effectiveFieldsAlias: {'customerId':'客户ID', 'name':'客户名称', 'phone':'手机号'},
 
@@ -148,7 +148,7 @@
                 var startDate = laydate.render({
                     elem: '#pickUpDate',
                     min: 1,
-                    max: 7
+                    max: 15
                 });
             });
         });

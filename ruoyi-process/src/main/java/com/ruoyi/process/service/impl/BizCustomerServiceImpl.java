@@ -1,7 +1,10 @@
 package com.ruoyi.process.service.impl;
 
 import java.util.List;
+
+import cn.hutool.extra.pinyin.PinyinUtil;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.process.mapper.BizCustomerMapper;
@@ -51,6 +54,11 @@ public class BizCustomerServiceImpl implements IBizCustomerService {
     @Override
     public int insertBizCustomer(BizCustomer bizCustomer) {
         bizCustomer.setCreateTime(DateUtils.getNowDate());
+        if (StringUtils.isBlank(bizCustomer.getCustomerId())) {
+            String pinyin = PinyinUtil.getPinyin(bizCustomer.getName(), "");
+            String lastPhoneNo = bizCustomer.getPhone().substring(5);
+            bizCustomer.setCustomerId(pinyin + lastPhoneNo);
+        }
         return bizCustomerMapper.insertBizCustomer(bizCustomer);
     }
 

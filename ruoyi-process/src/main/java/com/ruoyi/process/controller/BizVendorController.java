@@ -133,4 +133,20 @@ public class BizVendorController extends BaseController {
     public AjaxResult remove(String ids) {
         return toAjax(bizVendorService.deleteBizVendorByIds(ids));
     }
+
+    @GetMapping("getVendorByItemNo/{itemNo}")
+    @ResponseBody
+    public AjaxResult getVendorByItemNo(@PathVariable String itemNo) {
+       return getVendorByItemNo(itemNo, null);
+    }
+
+    @GetMapping("getVendorByItemNo/{itemNo}/{colorCode}")
+    @ResponseBody
+    public AjaxResult getVendorByItemNo(@PathVariable String itemNo, @PathVariable String colorCode) {
+        BizVendor bizVendorVo = new BizVendorVo();
+        bizVendorVo.setItemNo(itemNo);
+        bizVendorVo.setColorCode(colorCode);
+        List<BizVendor> bizVendors = bizVendorService.selectBizVendorList(bizVendorVo);
+        return toAjax(bizVendors.size());
+    }
 }
