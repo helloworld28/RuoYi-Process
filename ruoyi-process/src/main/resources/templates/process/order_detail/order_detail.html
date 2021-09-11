@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('订单明细列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="process:detail:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="process:detail:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="process:detail:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('process:detail:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('process:detail:remove')}]];
+        var purchasedDatas = [[${@dict.getType('biz_order_paid')}]];
+        var prefix = ctx + "process/detail";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "订单明细",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : 'null',
+                    visible: false
+                },
+
+                {
+                    field : 'itemNo', 
+                    title : '货号'
+                },
+                {
+                    field : 'colorCode', 
+                    title : '色号'
+                },
+                {
+                    field : 'length', 
+                    title : '长度'
+                },
+                {
+                    field : 'purchased', 
+                    title : '是否买过',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(purchasedDatas, value);
+                    }
+                },
+                {
+                    field : 'remark', 
+                    title : '备注'
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

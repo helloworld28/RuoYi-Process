@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改订单明细')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-detail-edit" th:object="${bizOrderDetail}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">订单号：</label>
+                <div class="col-sm-8">
+                    <input name="orderId" th:field="*{orderId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">货号：</label>
+                <div class="col-sm-8">
+                    <input name="itemNo" th:field="*{itemNo}" class="form-control" isItemNo="true" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">色号：</label>
+                <div class="col-sm-8">
+                    <input name="colorCode" th:field="*{colorCode}" class="form-control" isColorCode="true" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">长度：</label>
+                <div class="col-sm-8">
+                    <input name="length" th:field="*{length}" class="form-control" type="text" digits="true"  required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">是否买过：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_paid')}">
+                        <input type="radio" th:id="${'purchased_' + dict.dictCode}" name="purchased" th:value="${dict.dictValue}" th:field="*{purchased}">
+                        <label th:for="${'purchased_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "process/order/detail";
+        $("#form-detail-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-detail-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,7 +1,6 @@
 package com.ruoyi.process.service.impl;
 
 import java.util.List;
-
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.process.domain.BizVendorVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import com.ruoyi.common.core.text.Convert;
  * 供应商信息Service业务层处理
  *
  * @author Xianlu Tech
- * @date 2021-06-01
+ * @date 2021-09-11
  */
 @Service
 public class BizVendorServiceImpl implements IBizVendorService {

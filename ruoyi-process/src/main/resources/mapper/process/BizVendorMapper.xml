@@ -21,11 +21,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="priority"    column="priority"    />
         <result property="bought"    column="bought"    />
     </resultMap>
 
     <sql id="selectBizVendorVo">
-        select id, item_no, color_code, vendor_name, vendor_item_no, vendor_color_code, vendor_region, vendor_price, vendor_cylinder_no, color_difference, vendor_gap, create_time, create_by, update_by, update_time, remark from biz_vendor
+        select id, item_no, color_code, vendor_name, vendor_item_no, vendor_color_code, vendor_region, vendor_price, vendor_cylinder_no, color_difference, vendor_gap, create_time, create_by, update_by, update_time, remark, priority from biz_vendor
     </sql>
 
     <select id="selectBizVendorList" parameterType="BizVendor" resultMap="BizVendorResult">
@@ -33,14 +34,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="itemNo != null  and itemNo != ''"> and item_no = #{itemNo}</if>
             <if test="colorCode != null  and colorCode != ''"> and color_code = #{colorCode}</if>
-            <if test="vendorName != null  and vendorName != ''"> and vendor_name like concat('%', #{vendorName}, '%')</if>
+            <if test="vendorName != null  and vendorName != ''"> and vendor_name = #{vendorName}</if>
             <if test="vendorItemNo != null  and vendorItemNo != ''"> and vendor_item_no = #{vendorItemNo}</if>
             <if test="vendorColorCode != null  and vendorColorCode != ''"> and vendor_color_code = #{vendorColorCode}</if>
-            <if test="vendorRegion != null  and vendorRegion != ''"> and vendor_region = #{vendorRegion}</if>
-            <if test="vendorPrice != null "> and vendor_price = #{vendorPrice}</if>
-            <if test="vendorCylinderNo != null  and vendorCylinderNo != ''"> and vendor_cylinder_no = #{vendorCylinderNo}</if>
-            <if test="colorDifference != null  and colorDifference != ''"> and color_difference = #{colorDifference}</if>
-            <if test="vendorGap != null  and vendorGap != ''"> and vendor_gap = #{vendorGap}</if>
         </where>
     </select>
     
@@ -93,7 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="vendorColorCode != null  and vendorColorCode != ''"> and vendor_color_code = #{vendorColorCode}</if>
         </where>
     </select>
-        
+
     <insert id="insertBizVendor" parameterType="BizVendor" useGeneratedKeys="true" keyProperty="id">
         insert into biz_vendor
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -112,6 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+            <if test="priority != null ">priority,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="itemNo != null  and itemNo != ''">#{itemNo},</if>
@@ -129,6 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="priority != null ">#{priority},</if>
          </trim>
     </insert>
 
@@ -150,11 +148,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="priority != null ">priority = #{priority},</if>
         </trim>
         where id = #{id}
     </update>
-
-
 
     <delete id="deleteBizVendorById" parameterType="Long">
         delete from biz_vendor where id = #{id}

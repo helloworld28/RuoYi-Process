@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 供应商信息对象 biz_vendor
  *
  * @author Xianlu Tech
- * @date 2021-06-01
+ * @date 2021-09-11
  */
 public class BizVendor extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -56,6 +56,10 @@ public class BizVendor extends BaseEntity {
     /** 供应商空差 */
     @Excel(name = "供应商空差")
     private String vendorGap;
+
+    /** 优先级，越大优先级越高 */
+    @Excel(name = "优先级，越大优先级越高")
+    private Integer priority;
 
     public void setId(Long id) {
         this.id = id;
@@ -134,6 +138,13 @@ public class BizVendor extends BaseEntity {
     public String getVendorGap() {
         return vendorGap;
     }
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
 
     @Override
     public String toString() {
@@ -154,6 +165,7 @@ public class BizVendor extends BaseEntity {
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("priority", getPriority())
             .toString();
     }
 }

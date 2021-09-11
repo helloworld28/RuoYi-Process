@@ -9,7 +9,7 @@ import java.util.List;
  * 供应商信息Mapper接口
  *
  * @author Xianlu Tech
- * @date 2021-06-01
+ * @date 2021-09-11
  */
 public interface BizVendorMapper {
     /**

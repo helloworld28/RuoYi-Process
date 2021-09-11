@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 供应商信息Controller
  *
  * @author Xianlu Tech
- * @date 2021-06-01
+ * @date 2021-09-11
  */
 @Controller
 @RequestMapping("/process/vendor")
@@ -128,7 +128,7 @@ public class BizVendorController extends BaseController {
      */
     @RequiresPermissions("process:vendor:remove")
     @Log(title = "供应商信息", businessType = BusinessType.DELETE)
-    @PostMapping("/remove")
+    @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
         return toAjax(bizVendorService.deleteBizVendorByIds(ids));

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.process.mapper.BizOrderDetailMapper">
+    
+    <resultMap type="BizOrderDetail" id="BizOrderDetailResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="itemNo"    column="item_no"    />
+        <result property="colorCode"    column="color_code"    />
+        <result property="length"    column="length"    />
+        <result property="purchased"    column="purchased"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBizOrderDetailVo">
+        select id, order_id, item_no, color_code, length, purchased, remark, create_by, create_time, update_by, update_time from biz_order_detail
+    </sql>
+
+    <select id="selectBizOrderDetailList" parameterType="BizOrderDetail" resultMap="BizOrderDetailResult">
+        <include refid="selectBizOrderDetailVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="itemNo != null  and itemNo != ''"> and item_no = #{itemNo}</if>
+            <if test="colorCode != null  and colorCode != ''"> and color_code = #{colorCode}</if>
+            <if test="length != null "> and length = #{length}</if>
+            <if test="purchased != null "> and purchased = #{purchased}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizOrderDetailById" parameterType="Long" resultMap="BizOrderDetailResult">
+        <include refid="selectBizOrderDetailVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizOrderDetail" parameterType="BizOrderDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_order_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null  and orderId != ''">order_id,</if>
+            <if test="itemNo != null  and itemNo != ''">item_no,</if>
+            <if test="colorCode != null  and colorCode != ''">color_code,</if>
+            <if test="length != null ">length,</if>
+            <if test="purchased != null ">purchased,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null  and orderId != ''">#{orderId},</if>
+            <if test="itemNo != null  and itemNo != ''">#{itemNo},</if>
+            <if test="colorCode != null  and colorCode != ''">#{colorCode},</if>
+            <if test="length != null ">#{length},</if>
+            <if test="purchased != null ">#{purchased},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizOrderDetail" parameterType="BizOrderDetail">
+        update biz_order_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null  and orderId != ''">order_id = #{orderId},</if>
+            <if test="itemNo != null  and itemNo != ''">item_no = #{itemNo},</if>
+            <if test="colorCode != null  and colorCode != ''">color_code = #{colorCode},</if>
+            <if test="length != null ">length = #{length},</if>
+            <if test="purchased != null ">purchased = #{purchased},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizOrderDetailById" parameterType="Long">
+        delete from biz_order_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteBizOrderDetailByIds" parameterType="String">
+        delete from biz_order_detail where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
