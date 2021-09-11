@@ -10,7 +10,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label">订单号：</label>
                 <div class="col-sm-8">
-                    <input name="taskId" th:field="*{taskId}" class="form-control" type="text" readonly>
+                    <input name="taskId" th:field="*{orderId}" class="form-control" type="text" readonly>
                 </div>
             </div>
             <div class="form-group">    
@@ -25,24 +25,8 @@
                     <input name="customerName" th:field="*{customerName}" class="form-control" type="text" required>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">货号：</label>
-                <div class="col-sm-8">
-                    <input name="itemNo" th:field="*{itemNo}" class="form-control" type="text" required>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">色号：</label>
-                <div class="col-sm-8">
-                    <input name="colorCode" th:field="*{colorCode}" class="form-control" type="text" required>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">数量：</label>
-                <div class="col-sm-8">
-                    <input name="quatity" th:field="*{quatity}" class="form-control" type="text" required>
-                </div>
-            </div>
+
+
             <div class="form-group">
                 <label class="col-sm-3 control-label">客户要求：</label>
                 <div class="col-sm-8">
@@ -51,15 +35,7 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">是否已买过：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_paid')}">
-                        <input type="radio" th:id="${'purchased_' + dict.dictCode}" name="purchased" th:value="${dict.dictValue}" th:field="*{purchased}" required>
-                        <label th:for="${'purchased_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
-                </div>
-            </div>
+
             <div class="form-group">    
                 <label class="col-sm-3 control-label">提货方式：</label>
                 <div class="col-sm-8">
@@ -97,11 +73,36 @@
                     <textarea name="remark" class="form-control">[[*{remark}]]</textarea>
                 </div>
             </div>
+
+            <div class="form-group">
+
+                <label class="col-sm-3 control-label">订单明细：</label>
+
+                <div class="col-sm-8 ">
+                    <div class="btn-group-sm" id="toolbar" role="group">
+                        <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="process:detail:add">
+                            <i class="fa fa-plus"></i> 添加
+                        </a>
+                        <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="process:detail:edit">
+                            <i class="fa fa-edit"></i> 修改
+                        </a>
+                        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="process:detail:remove">
+                            <i class="fa fa-remove"></i> 删除
+                        </a>
+
+                    </div>
+                    <dev class="select-table table-striped">
+                        <table id="bootstrap-table" data-show-footer="true"></table>
+                    </dev>
+
+                </div>
+            </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />
     <script type="text/javascript">
         var prefix = ctx + "process/order";
+        var orderId = "[[${bizOrder.orderId}]]";
         $("#form-order-edit").validate({
             focusCleanup: true
         });
@@ -111,6 +112,48 @@
                 $.operate.save(prefix + "/edit", $('#form-order-edit').serialize());
             }
         }
+
+        $(function () {
+            var prefix_order_detail = ctx + "process/order/detail";
+            var options = {
+                url: prefix_order_detail + "/list/" + orderId,
+                createUrl: prefix_order_detail + "/add?orderId=" + orderId,
+                updateUrl: prefix_order_detail + "/edit/{id}",
+                removeUrl: prefix_order_detail + "/remove",
+                exportUrl: prefix_order_detail + "/export",
+                modalName: "订单明细",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'id',
+                        title: 'ID',
+                        visible: false
+                    },
+                    {
+                        field: 'orderId',
+                        title: '订单ID',
+                        visible: false
+                    },
+                    {
+                        field: 'itemNo',
+                        title: '货号'
+                    },
+                    {
+                        field: 'colorCode',
+                        title: '色号'
+                    },
+                    {
+                        field: 'length',
+                        title: '数量'
+                    },
+                    {
+                        field: 'remark',
+                        title: '备注'
+                    }]
+            };
+            $.table.init(options);
+        });
     </script>
 </body>
 </html>

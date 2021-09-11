@@ -1,7 +1,6 @@
 package com.ruoyi.process.order.mapper;
 
 import com.ruoyi.process.order.domain.BizOrder;
-import com.ruoyi.process.order.domain.BizOrderVo;
 
 import java.util.List;
 

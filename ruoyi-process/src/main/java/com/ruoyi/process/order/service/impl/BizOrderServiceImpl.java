@@ -13,14 +13,12 @@ import com.ruoyi.process.order.mapper.BizOrderMapper;
 import com.ruoyi.process.order.service.IBizOrderService;
 import com.ruoyi.process.service.IBizOrderSeqService;
 import com.ruoyi.process.todoitem.service.IBizTodoItemService;
-import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.mapper.SysUserMapper;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
-import org.apache.commons.collections.list.TreeList;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.*;
 import java.util.stream.Collectors;
 

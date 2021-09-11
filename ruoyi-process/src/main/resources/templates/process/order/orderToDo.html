@@ -109,29 +109,12 @@
                     field : 'customerName', 
                     title : '客户名称'
                 },
-                {
-                    field : 'itemNo', 
-                    title : '货号'
-                },
-                {
-                    field : 'colorCode', 
-                    title : '色号'
-                },
-                {
-                    field : 'quatity', 
-                    title : '数量'
-                },
+
                 {
                     field : 'specialDemands', 
                     title : '客户要求'
                 },
-                {
-                    field : 'purchased', 
-                    title : '是否已买过',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(purchasedDatas, value);
-                    }
-                },
+
                 {
                     field : 'pickUpWay', 
                     title : '提货方式',
@@ -182,7 +165,7 @@
                         if (row.taskName.indexOf('审批') !== -1) {
                             actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="showVerifyDialog(\'' + row.taskId + '\', \'' + row.taskName + '\')"><i class="fa fa-edit"></i> 审批</a> ');
                         } else {
-                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="showVerifyDialog(\'' + row.taskId + '\', \'' + row.taskName + '\')"><i class="fa fa-edit"></i> ' + row.taskName + '</a> ');
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="showVerifyDialog(\'' + row.taskId + '\', \'' + row.taskName + '\')"><i class="fa fa-edit"></i> 待' + row.taskName + '</a> ');
                         }
                         actions.push('<a class="btn btn-primary btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i> 详情</a> ');
                         actions.push('<a class="btn btn-warning btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="showHistoryDialog(\'' + row.instanceId + '\')"><i class="fa fa-list"></i> 记录</a> ');

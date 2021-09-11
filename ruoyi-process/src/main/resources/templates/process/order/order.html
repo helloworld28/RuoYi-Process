@@ -84,6 +84,7 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('process:order:edit')}]];
         var removeFlag = [[${@permission.hasPermi('process:order:remove')}]];
+        var cancelReportFlag = [[${@permission.hasPermi('process:orderProcess:cancelReport')}]];
         var specialDemandsDatas = [[${@dict.getType('biz_order_special_demands')}]];
         var purchasedDatas = [[${@dict.getType('biz_order_paid')}]];
         var pickUpWayDatas = [[${@dict.getType('biz_order_pick_up_way')}]];
@@ -125,30 +126,12 @@
                     field : 'customerName', 
                     title : '客户名称'
                 },
-                {
-                    field : 'itemNo', 
-                    title : '货号'
-                },
-                {
-                    field : 'colorCode', 
-                    title : '色号'
-                },
-                {
-                    field : 'quatity', 
-                    title : '数量（米）',
-                    align: 'right'
-                },
+
                 {
                     field : 'specialDemands', 
                     title : '客户要求'
                 },
-                {
-                    field : 'purchased', 
-                    title : '是否已买过',
-                    formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(purchasedDatas, value);
-                    }
-                },
+
                 {
                     field : 'pickUpWay', 
                     title : '提货方式',
@@ -207,6 +190,9 @@
                             actions.push('<a class="btn btn-primary btn-xs " href="javascript:void(0)" onclick="$.operate.detail(\'' + row.id + '\')"><i class="fa fa-eye"></i> 表单数据</a> ');
                             actions.push('<a class="btn btn-warning btn-xs " href="javascript:void(0)" onclick="showHistoryDialog(\'' + row.instanceId + '\')"><i class="fa fa-list"></i> 审批历史</a> ');
                             actions.push('<a class="btn btn-info btn-xs " href="javascript:void(0)" onclick="showProcessImgDialog(\'' + row.instanceId + '\')"><i class="fa fa-image"></i> 进度查看</a> ');
+                            if(row.status < 50) {
+                                actions.push('<a class="btn btn-info btn-xs ' + cancelReportFlag + ' " href="javascript:void(0)" onclick="adjustOrder(\'' + row.instanceId + '\')"><i class="fa fa-image"></i> 撤回报数</a> ');
+                            }
                         } else {
                             actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i> 编辑</a> ');
                             actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i> 删除</a>');
@@ -228,6 +214,16 @@
             $.modal.confirm("确认要提交申请吗?", function() {
                 var url = prefix + "/submitApply";
                 var data = { "id": id };
+                $.operate.submit(url, "post", "json", data);
+            });
+
+        }
+
+        function adjustOrder(instanceId){
+
+            $.modal.confirm("将取消目前所在的流程，确认要重新报数吗?", function() {
+                var url =  "/process/orderProcess/adjustOrder";
+                var data = { "instanceId": instanceId };
                 $.operate.submit(url, "post", "json", data);
             });
         }

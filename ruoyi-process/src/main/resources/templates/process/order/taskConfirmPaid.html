@@ -26,40 +26,14 @@
                 <input name="customerName" th:field="*{customerName}" class="form-control" type="text" readonly>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">货号：</label>
-            <div class="col-sm-8">
-                <input name="itemNo" th:field="*{itemNo}" class="form-control" type="text" readonly>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">色号：</label>
-            <div class="col-sm-8">
-                <input name="colorCode" th:field="*{colorCode}" class="form-control" type="text" readonly>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">数量：</label>
-            <div class="col-sm-8">
-                <input name="quatity" th:field="*{quatity}" class="form-control" type="text" readonly>
-            </div>
-        </div>
+
         <div class="form-group">
             <label class="col-sm-3 control-label">客户要求：</label>
             <div class="col-sm-8">
                 <input name="specialDemands" th:field="*{specialDemands}" class="form-control" type="text" readonly>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-3 control-label">是否已买过：</label>
-            <div class="col-sm-8">
-                <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_paid')}">
-                    <input type="radio" th:id="${'purchased_' + dict.dictCode}" name="purchased"
-                           th:value="${dict.dictValue}" th:field="*{purchased}" readonly>
-                    <label th:for="${'purchased_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                </div>
-            </div>
-        </div>
+
         <div class="form-group">
             <label class="col-sm-3 control-label" >提货方式：</label>
             <div class="col-sm-8">
@@ -100,6 +74,30 @@
             <label class="col-sm-3 control-label">备注：</label>
             <div class="col-sm-8">
                 <textarea name="remark" class="form-control" readonly>[[*{remark}]]</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">订单明细：</label>
+            <div class="col-sm-8">
+                <table class="table" id="reportTable"  data-show-footer="true">
+                    <thead>
+                    <tr>
+                        <th>货号</th>
+                        <th>色号</th>
+                        <th>米数</th>
+                        <th>备注</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item:${orderDetails}">
+                        <td th:text="${item.itemNo}"/>
+                        <td th:text="${item.colorCode}"/>
+                        <td th:text="${item.length}"/>
+                        <td th:text="${item.remark}"/>
+                    </tr>
+                    </tbody>
+
+                </table>
             </div>
         </div>
         <div class="form-group">

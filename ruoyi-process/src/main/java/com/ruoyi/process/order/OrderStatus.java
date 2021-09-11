@@ -3,6 +3,7 @@ package com.ruoyi.process.order;
 public enum OrderStatus {
     WAITING_ACCEPT(10),
     WAITING_REPORT(20),
+    WAITING_ADJUST_REPORT(21),
     WAITING_CONFIRM(30),
     WAITING_BUY_INSTOCK(40),
     WAITING_KEEPER_CONFIRM(45),

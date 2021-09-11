@@ -11,14 +11,15 @@ import org.activiti.engine.IdentityService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
+import org.apache.shiro.crypto.hash.Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 
@@ -138,6 +139,32 @@ public class BizOrderProcessService {
         //3. 通知下个节点任务
         logger.info("通知下个节点任务");
         notifyNextActor(bizOrderVo, null);
+    }
+
+    public void sendAdjustOrderMsg(String instanceId) {
+        logger.info("send adjustOrderMsg instanceId[{}]", instanceId);
+
+        Execution execution = runtimeService.createExecutionQuery()
+                .messageEventSubscriptionName("adjustOrderMsg")
+                .processInstanceId(instanceId)
+                .singleResult();
+        HashMap<String, Object> msgMap = new HashMap<>();
+        msgMap.put("test", "test");
+
+
+        runtimeService.messageEventReceived("adjustOrderMsg", execution.getId(), msgMap);
+
+
+        logger.info("update order status to adjusted report");
+        updateOrderStatus(instanceId);
+    }
+
+    private void updateOrderStatus(String instanceId) {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(instanceId).singleResult();
+        BizOrder order = bizOrderService.selectBizOrderById(Long.parseLong(processInstance.getBusinessKey()));
+        BizOrderVo bizOrderVo = new BizOrderVo(order);
+        bizOrderVo.setStatus(OrderStatus.WAITING_ADJUST_REPORT.getValue());
+        bizOrderService.updateBizOrder(order);
     }
 
     public Optional<Comment> getPreviousTaskComment(String processInstanceId) {

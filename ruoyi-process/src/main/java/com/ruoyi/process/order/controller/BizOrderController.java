@@ -1,6 +1,5 @@
 package com.ruoyi.web.controller.process;
 
-import com.github.promeg.pinyinhelper.Pinyin;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -14,16 +13,14 @@ import com.ruoyi.process.order.domain.BizOrder;
 import com.ruoyi.process.order.domain.BizOrderVo;
 import com.ruoyi.process.order.service.BizOrderProcessService;
 import com.ruoyi.process.order.service.IBizOrderService;
+import com.ruoyi.process.service.IBizOrderDetailService;
 import com.ruoyi.process.service.IBizOrderVendorService;
 import com.ruoyi.system.domain.SysUser;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -63,6 +60,9 @@ public class BizOrderController extends BaseController {
 
     @Autowired
     private IBizOrderVendorService orderVendorService;
+
+    @Autowired
+    private IBizOrderDetailService orderDetailService;
 
     @RequiresPermissions("process:order:view")
     @GetMapping()
@@ -217,13 +217,17 @@ public class BizOrderController extends BaseController {
 
     @GetMapping("/taskAcceptOrder/{taskId}")
     public String taskAcceptOrder(@PathVariable String taskId, ModelMap modelMap) {
-        modelMap.put("bizOrder", orderProcessService.getBizOrderByTaskId(taskId));
+        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
+        modelMap.put("bizOrder", order);
+        modelMap.put("orderDetails",  orderDetailService.selectBizOrderDetailList(order.getOrderId()));
         return prefix + "/taskAcceptOrder";
     }
 
     @GetMapping("/taskReports/{taskId}")
     public String taskReports(@PathVariable String taskId, ModelMap modelMap) {
-        modelMap.put("bizOrder", orderProcessService.getBizOrderByTaskId(taskId));
+        BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
+        modelMap.put("bizOrder", order);
+        modelMap.put("orderDetails",  orderDetailService.selectBizOrderDetailList(order.getOrderId()));
         return prefix + "/taskReports";
     }
 
@@ -235,6 +239,7 @@ public class BizOrderController extends BaseController {
         mmap.put("bizOrder", order);
         //报数数据
         mmap.put("orderVendors", orderVendorService.selectBizOrderVendorList(order.getOrderId()));
+        mmap.put("orderDetails",  orderDetailService.selectBizOrderDetailList(order.getOrderId()));
 
         //获取最新的批复数据
         Optional<Comment> previousTaskComment = orderProcessService.getPreviousTaskComment(order.getInstanceId());
@@ -253,7 +258,7 @@ public class BizOrderController extends BaseController {
 
         //报数数据
         modelMap.put("orderVendors", orderVendorService.selectBizOrderVendorList(order.getOrderId()));
-
+        modelMap.put("orderDetails",  orderDetailService.selectBizOrderDetailList(order.getOrderId()));
         return prefix + "/taskConfirmPaid";
     }
 
@@ -262,6 +267,7 @@ public class BizOrderController extends BaseController {
     public String taskAdjustReports(@PathVariable String taskId, ModelMap modelMap) {
         BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
         modelMap.put("bizOrder", order);
+        modelMap.put("orderDetails",  orderDetailService.selectBizOrderDetailList(order.getOrderId()));
 
         //获取最新的批复数据
         Optional<Comment> previousTaskComment = orderProcessService.getPreviousTaskComment(order.getInstanceId());
@@ -275,6 +281,7 @@ public class BizOrderController extends BaseController {
     public ModelAndView taskCommon( String taskId, ModelMap modelMap) {
         BizOrderVo order = orderProcessService.getBizOrderByTaskId(taskId);
         modelMap.put("bizOrder", order);
+        modelMap.put("orderDetails",  orderDetailService.selectBizOrderDetailList(order.getOrderId()));
 
         Task task = orderProcessService.getTaskByTaskId(taskId);
         modelMap.put("operationName", task.getName());
