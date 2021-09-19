@@ -2,6 +2,8 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:include="include :: header('采购员报数，色差')"/>
+    <th:block th:include="include :: bootstrap-table-group-by-v2-css" />
+
 </head>
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -117,7 +119,7 @@
 
                 </div>
                 <dev class="select-table table-striped">
-                    <table id="bootstrap-table" data-show-footer="true"></table>
+                    <table id="bootstrap-table" ></table>
                 </dev>
 
             </div>
@@ -143,6 +145,7 @@
     </form>
 </div>
 <th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-group-by-v2-js" />
 
 <script th:inline="javascript">
     var prefix = ctx + "process/order";
@@ -151,7 +154,7 @@
     var editFlag = [[${@permission.hasPermi('process:order_vendor:edit')}]];
     var removeFlag = [[${@permission.hasPermi('process:order_vendor:remove')}]];
     var prefix_order_vender = ctx + "process/order_vendor";
-    var orderId = [[${bizOrder.orderId}]]
+    var orderId = [[${bizOrder.orderId}]];
     var customerId = [[${bizOrder.customerId}]]
 
     $(function () {
@@ -162,41 +165,47 @@
             removeUrl: prefix_order_vender + "/remove",
             exportUrl: prefix_order_vender + "/export",
             modalName: "订单报数",
-            "data-show-footer": "true",
+            pageSize: 100,
+            sidePagination: "client",
             columns: [{
-                checkbox: true
+            checkbox: true
+             },
+            {
+                field: 'id',
+                title: 'ID',
+                visible: false
             },
-                {
-                    field: 'id',
-                    title: 'ID',
-                    visible: false
-                },
-                {
-                    field: 'orderId',
-                    title: '订单ID',
-                    visible: false
-                },
-                {
-                    field: 'itemNo',
-                    title: '货号'
-                },
-                {
-                    field: 'colorCode',
-                    title: '色号'
-                },
-                {
-                    field: 'buyQuote',
-                    title: '供应商报数'
-                },
-                {
-                    field: 'sellQuote',
-                    title: '出档口数量'
-                },
-                {
-                    field: 'remark',
-                    title: '备注'
-                }]
-        };
+            {
+                field: 'orderId',
+                title: '订单ID',
+                visible: false
+            },
+            {
+                field: 'itemNo',
+                title: '货号'
+            },
+            {
+                field: 'colorCode',
+                title: '色号'
+            },
+            {
+                field: 'buyQuote',
+                title: '供应商报数'
+            },
+            {
+                field: 'sellQuote',
+                title: '出档口数量'
+            },
+            {
+                field: 'remark',
+                title: '备注'
+            }],
+            groupBy: "true",
+            groupByField: ["itemNo", "colorCode"],
+            groupByFormatter: function(value, idx, data){
+                return  value + ", 报数合计：" + sumQuote(data);
+            },
+    };
         $.table.init(options);
     });
 
@@ -206,11 +215,21 @@
 
     function submitHandler() {
         if ($.validate.form()) {
-
-
             $.operate.saveTab(prefix + "/completeReports/" + taskId, $('#form-order-edit').serialize());
         }
     }
+    function sumQuote(rows) {
+        var result = 0;
+        rows.forEach(function (row) {
+            result += row.buyQuote;
+        })
+        return result;
+    }
+
+
+
 </script>
+
+
 </body>
 </html>

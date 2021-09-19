@@ -2,6 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:include="include :: header('采购员报数，色差')"/>
+    <th:block th:include="include :: bootstrap-table-group-by-v2-css" />
 </head>
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -79,7 +80,7 @@
         <div class="form-group">
             <label class="col-sm-3 control-label">订单明细：</label>
             <div class="col-sm-8">
-                <table class="table" id="reportTable"  data-show-footer="true">
+                <table class="table" id="orderDetailTable"  data-show-footer="true">
                     <thead>
                     <tr>
                         <th>货号</th>
@@ -103,21 +104,25 @@
         <div class="form-group">
             <label class="col-sm-3 control-label">采购员上报米数与色差：</label>
             <div class="col-sm-8">
-                <table class="table" id="reportTable"  data-show-footer="true">
+                <table class="table" data-toggle="table"
+                      id="reportTable"  data-show-footer="true" data-group-by="true"
+                       data-group-by-field="itemNo-colorCode" data-group-by-formatter="groupByFormatter" >
                     <thead>
                     <tr>
-                        <th>货号</th>
-                        <th>色号</th>
-                        <th>米数</th>
-                        <th>备注</th>
+                        <th data-field="itemNo-colorCode" data-visible="false" />
+                        <th  data-field="itemNo">货号</th>
+                        <th  data-field="colorCode">色号</th>
+                        <th data-field="buyQuote">米数</th>
+                        <th  data-field="remark" >备注</th>
                     </tr>
                     </thead>
                     <tbody>
                         <tr th:each="item:${orderVendors}">
-                            <td th:text="${item.itemNo}"/>
-                            <td th:text="${item.colorCode}"/>
-                            <td th:text="${item.buyQuote}"/>
-                            <td th:text="${item.remark}"/>
+                            <td  th:text="|${item.itemNo},${item.colorCode}|" hidden/>
+                            <td  th:text="${item.itemNo}"/>
+                            <td   th:text="${item.colorCode}"/>
+                            <td   th:text="${item.buyQuote}"/>
+                            <td  th:text="${item.remark}"/>
                         </tr>
                     </tbody>
 
@@ -152,14 +157,13 @@
     </form>
 </div>
 <th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-group-by-v2-js" />
 <script th:inline="javascript">
     var prefix = ctx + "process/order";
     var taskId = [[${taskId}]];
     $("#form-order-edit").validate({
         focusCleanup: true
     });
-
-
 
     function submitHandler() {
         if ($.validate.form()) {
@@ -168,14 +172,25 @@
         }
     }
 
-    function totalBuyQuoteFormatter(data) {
-        var field = this.field;
-        return '$' + data.map(function (row) {
-            return +row[field].substring(1)
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
+
+
+    $(function() {
+        $('#reportTable').bootstrapTable()
+    })
+
+    function groupByFormatter(value, idx, rows) {
+        return  value + ", 报数合计：" + sumQuote(rows);
     }
+
+    function sumQuote(rows) {
+        var result = 0;
+        rows.forEach(function (row) {
+            result += parseInt(row.buyQuote);
+        })
+        return result;
+    }
+
+
 
 
 </script>

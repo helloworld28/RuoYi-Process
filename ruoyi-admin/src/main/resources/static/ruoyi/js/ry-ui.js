@@ -43,6 +43,9 @@
         		    rightFixedNumber: 0,
         		    queryParams: $.table.queryParams,
         		    rowStyle: {},
+					groupBy: false,
+					groupByField: undefined,
+					groupByFormatter:  undefined
         		};
             	var options = $.extend(defaults, options);
                 $.table._option = options;
@@ -100,6 +103,9 @@
                     onLoadSuccess: $.table.onLoadSuccess,               // 当所有数据被加载时触发处理函数
                     exportOptions: options.exportOptions,               // 前端导出忽略列索引
                     detailFormatter: options.detailFormatter,           // 在行下面展示其他数据列表
+					groupBy: options.groupBy,
+					groupByField: options.groupByField,
+					groupByFormatter: options.groupByFormatter
                 });
             },
             // 查询条件

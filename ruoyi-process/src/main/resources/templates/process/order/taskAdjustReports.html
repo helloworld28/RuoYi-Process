@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:include="include :: header('调整报数，色差')"/>
+    <th:block th:include="include :: header('调整报数')"/>
+    <th:block th:include="include :: bootstrap-table-group-by-v2-css" />
+
 </head>
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -150,6 +152,7 @@
     </form>
 </div>
 <th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-group-by-v2-js" />
 
 <script th:inline="javascript">
     var prefix = ctx + "process/order";
@@ -159,15 +162,19 @@
     var removeFlag = [[${@permission.hasPermi('process:order_vendor:remove')}]];
     var prefix_order_vender = ctx + "process/order_vendor";
     var orderId = [[${bizOrder.orderId}]]
+    var customerId = [[${bizOrder.customerId}]]
+
 
     $(function () {
         var options = {
             url: prefix_order_vender + "/list/" + orderId,
-            createUrl: prefix_order_vender + "/add?orderId=" + orderId,
+            createUrl: prefix_order_vender + "/add?orderId=" + orderId+ "&customerId=" + customerId,
             updateUrl: prefix_order_vender + "/edit/{id}",
             removeUrl: prefix_order_vender + "/remove",
             exportUrl: prefix_order_vender + "/export",
             modalName: "订单报数",
+            pageSize: 100,
+            sidePagination: "client",
             columns: [{
                 checkbox: true
             },
@@ -180,10 +187,7 @@
                     field: 'orderId',
                     title: '订单ID'
                 },
-                {
-                    field: 'vendorId',
-                    title: '供应商信息ID'
-                },
+
                 {
                     field: 'colorCode',
                     title: '色号'
@@ -203,7 +207,14 @@
                 {
                     field: 'remark',
                     title: '备注'
-                }]
+                }],
+
+                    groupBy: "true",
+                    groupByField: ["itemNo", "colorCode"],
+                    groupByFormatter: function(value, idx, data){
+                        console.log()
+                        return  value + ", 报数合计：" + sumQuote(data);
+                    }
         };
         $.table.init(options);
     });
@@ -221,6 +232,16 @@
             $.operate.saveTab(prefix + "/completeReports/" + taskId, $('#form-order-edit').serialize());
         }
     }
+    function sumQuote(rows) {
+        var result = 0;
+        rows.forEach(function (row) {
+            result += row.buyQuote;
+        })
+        return result;
+    }
+
+
+
 </script>
 </body>
 </html>
