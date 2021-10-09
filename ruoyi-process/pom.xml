@@ -79,6 +79,12 @@
             <artifactId>hutool-all</artifactId>
             <version>${hutool.verion}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.5.0</version>
+        </dependency>
         <!-- xml解析依赖-->
         <!--activiti modeler 5.22 end-->
     </dependencies>
