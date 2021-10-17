@@ -31,7 +31,7 @@ public class BizOrderDetail extends BaseEntity {
 
     /** 长度 */
     @Excel(name = "长度")
-    private Long length;
+    private String length;
 
     /** 是否买过 */
     @Excel(name = "是否买过")
@@ -65,11 +65,11 @@ public class BizOrderDetail extends BaseEntity {
     public String getColorCode() {
         return colorCode;
     }
-    public void setLength(Long length) {
+    public void setLength(String length) {
         this.length = length;
     }
 
-    public Long getLength() {
+    public String getLength() {
         return length;
     }
     public void setPurchased(Integer purchased) {
