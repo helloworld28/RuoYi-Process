@@ -37,6 +37,15 @@
                     <input name="buyQuote" th:field="*{buyQuote}" class="form-control" type="text">
                 </div>
             </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">单位：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('biz_order_vendor_unit')}">
+                        <input type="radio" th:id="${'unit_' + dict.dictCode}" name="unit" th:value="${dict.dictValue}" th:field="*{unit}" required>
+                        <label th:for="${'unit_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label">出档口数量：</label>
                 <div class="col-sm-8">

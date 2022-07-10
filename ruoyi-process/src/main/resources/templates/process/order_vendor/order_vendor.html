@@ -71,6 +71,7 @@
 <script th:inline="javascript">
     var editFlag = [[${@permission.hasPermi('process:order_vendor:edit')}]];
     var removeFlag = [[${@permission.hasPermi('process:order_vendor:remove')}]];
+    var unitDatas = [[${@dict.getType('biz_order_vendor_unit')}]];
     var prefix = ctx + "process/order_vendor";
 
     $(function () {
@@ -114,6 +115,14 @@
                     field: 'sellQuote',
                     title: '出档口数量'
                 },
+                {
+                    field : 'unit',
+                    title : '单位',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(unitDatas, value);
+                    }
+                },
+
                 {
                     field: 'remark',
                     title: '备注'

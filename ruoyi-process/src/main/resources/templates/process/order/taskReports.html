@@ -153,6 +153,8 @@
 
     var editFlag = [[${@permission.hasPermi('process:order_vendor:edit')}]];
     var removeFlag = [[${@permission.hasPermi('process:order_vendor:remove')}]];
+    var unitDatas = [[${@dict.getType('biz_order_vendor_unit')}]];
+
     var prefix_order_vender = ctx + "process/order_vendor";
     var orderId = [[${bizOrder.orderId}]];
     var customerId = [[${bizOrder.customerId}]]
@@ -195,6 +197,13 @@
             {
                 field: 'sellQuote',
                 title: '出档口数量'
+            },
+            {
+                field : 'unit',
+                title : '单位',
+                formatter: function(value, row, index) {
+                    return $.table.selectDictLabel(unitDatas, value);
+                }
             },
             {
                 field: 'remark',

@@ -18,10 +18,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="customerId"    column="customer_id"    />
+        <result property="unit"    column="unit"    />
     </resultMap>
 
     <sql id="selectBizOrderVendorVo">
-        select id, order_id, vendor_id, color_code, item_no, buy_quote, sell_quote, create_time, create_by, update_by, update_time, remark, customer_id from biz_order_vendor
+        select id, order_id, vendor_id, color_code, item_no, buy_quote, sell_quote, create_time, create_by, update_by, update_time, remark, customer_id, unit from biz_order_vendor
     </sql>
 
     <select id="selectBizOrderVendorList" parameterType="BizOrderVendor" resultMap="BizOrderVendorResult">
@@ -33,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="itemNo != null  and itemNo != ''"> and item_no = #{itemNo}</if>
             <if test="buyQuote != null "> and buy_quote = #{buyQuote}</if>
             <if test="sellQuote != null "> and sell_quote = #{sellQuote}</if>
-            <if test="customerId != null  and customerId != ''"> and customer_id = #{customerId}</if>
+            <if test="unit != null "> and unit = #{unit}</if>
         </where>
     </select>
     
@@ -57,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="customerId != null  and customerId != ''">customer_id,</if>
+            <if test="unit != null ">unit,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderId != null  and orderId != ''">#{orderId},</if>
@@ -71,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="customerId != null  and customerId != ''">#{customerId},</if>
+            <if test="unit != null ">#{unit},</if>
          </trim>
     </insert>
 
@@ -89,6 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
             <if test="customerId != null  and customerId != ''">customer_id = #{customerId},</if>
+            <if test="unit != null ">unit = #{unit},</if>
         </trim>
         where id = #{id}
     </update>

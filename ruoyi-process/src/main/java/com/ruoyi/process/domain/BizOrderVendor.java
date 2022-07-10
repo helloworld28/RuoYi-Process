@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 订单供应商信息对象 biz_order_vendor
  *
  * @author Xianlu Tech
- * @date 2021-06-13
+ * @date 2021-10-17
  */
 public class BizOrderVendor extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -17,8 +17,8 @@ public class BizOrderVendor extends BaseEntity {
     /** null */
     private Long id;
 
-    /** null */
-    @Excel(name = "null")
+    /** 订单ID */
+    @Excel(name = "订单ID")
     private String orderId;
 
     /** null */
@@ -42,8 +42,11 @@ public class BizOrderVendor extends BaseEntity {
     private Integer sellQuote;
 
     /** 客户ID */
-    @Excel(name = "客户ID")
     private String customerId;
+
+    /** 单位 */
+    @Excel(name = "单位")
+    private Integer unit;
 
     public void setId(Long id) {
         this.id = id;
@@ -101,6 +104,13 @@ public class BizOrderVendor extends BaseEntity {
     public String getCustomerId() {
         return customerId;
     }
+    public void setUnit(Integer unit) {
+        this.unit = unit;
+    }
+
+    public Integer getUnit() {
+        return unit;
+    }
 
     @Override
     public String toString() {
@@ -118,6 +128,7 @@ public class BizOrderVendor extends BaseEntity {
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
             .append("customerId", getCustomerId())
+            .append("unit", getUnit())
             .toString();
     }
 }
